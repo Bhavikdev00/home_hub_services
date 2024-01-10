@@ -28,6 +28,20 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  image_picker: ^1.0.6
+  material_design_icons_flutter: ^7.0.7296
+  awesome_icons: ^1.1.0
+  firebase_auth: ^4.16.0
+  get: ^4.6.6
+  sizer: ^2.0.15
+  flutter_svg: ^2.0.9
+  get_storage: ^2.1.1
+  cloud_firestore: ^4.14.0
+  firebase_core: ^2.15.0
+  loading_animation_widget: ^1.2.0+4
+  firebase_storage: ^11.6.0
+  mailer: ^6.0.1
+  otp: ^3.1.4
   flutter:
     sdk: flutter
 
@@ -59,9 +73,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/svg/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

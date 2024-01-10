@@ -1,0 +1,298 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:home_hub_services/utils/app_routes.dart';
+import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:sizer/sizer.dart';
+
+import '../../constraint/app_assets.dart';
+import '../../constraint/app_color.dart';
+import '../../constraint/app_string.dart';
+import 'RegisterDetailsController.dart';
+
+class RegisterDetails extends StatelessWidget {
+  RegisterDetails({super.key});
+
+
+
+  RegisterDetailsController _registerDetailsController =
+      Get.put(RegisterDetailsController());
+
+  final _globalKey = GlobalKey<FormState>();
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, dynamic>? arguments = Get.arguments as Map<String, dynamic>?;
+    final String email = arguments?['email'] ?? '';
+    final String password = arguments?['password'] ?? '';
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 7),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Icon(
+                      Icons.arrow_back_outlined,
+                      size: 4.h,
+                    ),
+                  ),
+                ),
+              ),
+              3.h.addHSpace(),
+              Center(
+                  child: "Services Provide Details"
+                      .mediumReadex(fontColor: Colors.black, fontSize: 30)),
+              3.h.addHSpace(),
+              Center(child: "Pick Images".mediumReadex()),
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                      ),
+                      child: Obx(() {
+                        final imageFile =
+                            _registerDetailsController.imageFile.value;
+                        return imageFile != null
+                            ? CircleAvatar(
+                                radius: 100,
+                                backgroundColor: Colors.transparent,
+                                child: ClipOval(
+                                  child: Image.file(
+                                    imageFile,
+                                    width: 130,
+                                    height: 130,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : Icon(
+                                Icons.person,
+                                size: 100,
+                                color: Colors.grey,
+                              );
+                      }),
+                    ),
+                    Positioned(
+                      bottom: 2,
+                      right: 5,
+                      child: CircleAvatar(
+                        radius: 20,
+                        child: IconButton(
+                          onPressed: () async {
+                            await _registerDetailsController.pickImage();
+                          },
+                          icon: Icon(Icons.add),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              3.h.addHSpace(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Form(
+                  key: _globalKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                child: TextFormField(
+                                  controller: _registerDetailsController.fName,
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter the First Name";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                labelText: "First Name",
+                                hintText: "First Name",
+                                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                              ),
+                            )),
+                            4.w.addWSpace(),
+                            Expanded(
+                                child: TextFormField(
+                                  controller: _registerDetailsController.lName,
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Emter the Last Name";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                labelText: "Last Name",
+                                hintText: "Last Name",
+                                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+                      2.h.addHSpace(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _registerDetailsController.contact,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                validator: (value) {
+                                  if (value == null ||
+                                      !AppAssets.isvalidmobile(value)) {
+                                    return "Enter the Contact";
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    labelText: "Contact",
+                                    hintText: 'Contact',
+                                    // errorText: contecterror,
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.auto,
+                                    suffixIcon: Icon(Icons.call)),
+                              ),
+                            ),
+                            4.w.addWSpace(),
+                            Expanded(
+                                child: TextFormField(
+                                  controller: _registerDetailsController.contactOptional,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                      labelText: "Contact(Optional)",
+                                      // errorText: contecterror,
+                                      floatingLabelBehavior:
+                                      FloatingLabelBehavior.auto,
+                                      suffixIcon: Icon(Icons.call)),
+                                ),),
+
+                          ],
+                        ),
+                      ),
+                      2.h.addHSpace(),
+                  TextFormField(
+                    controller: _registerDetailsController.address,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      labelText: "Address(Optional)",
+                      hintText: 'Address(Optional)',
+                      alignLabelWithHint: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    ),
+                  ),
+                      2.h.addHSpace(),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select a Category'; // Validation message
+                            }
+                            return null; // Return null if validation succeeds
+                          },
+                          value:_registerDetailsController.selectedServices.value,
+                          hint: const Text('Selected Services'),
+                          onChanged: (String? newValue) {
+                            _registerDetailsController.setSelectedService(newValue);
+                          },
+                          items: _registerDetailsController.selectServices.map((String service) {
+                            return DropdownMenuItem<String>(
+                              value: service,
+                              child: Text(service),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              2.h.addHSpace(),
+              Obx(
+                () => _registerDetailsController.isLoading.value ?
+                LoadingAnimationWidget.hexagonDots(
+                    color: appColor, size: 5.h)
+                :Center(
+                  child: appButton(onTap: () async {
+                    if(_globalKey.currentState!.validate()){
+                      await _registerDetailsController.startResendTimer(email: email,password: password);
+                      Get.toNamed(Routes.otpCheck,arguments: {
+                        "email" : email,
+                        "password" : password
+                      });
+                    }else{
+                      print("Enter Form Filed");
+                    }
+                  },
+                      text: "Register"),
+                ),
+              ),
+              3.h.addHSpace(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
