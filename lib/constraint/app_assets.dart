@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class AppAssets{
   static const imagePath = "assets/images/";
+  static const lottiePath = "assets/lottie/";
   static const svgImagePath = "assets/images/svg/";
+
+  static const loginAnimation = "${lottiePath}login.json";
+
+
+
   static const svgLogo="${svgImagePath}app_logo.svg";
   static const appLogo="${imagePath}app_logo.png";
   static const sallerLogo = "${imagePath}saller.png";
@@ -37,4 +44,9 @@ Widget assetImage(String image, {double? height, double? width, Color? color,Box
 AssetImage assetsImage2(String image,
     {double? height, double? width, Color? color}) {
   return AssetImage(image);
+}
+
+
+LottieBuilder assetLottieAnimation({required String path}){
+  return Lottie.asset(path);
 }

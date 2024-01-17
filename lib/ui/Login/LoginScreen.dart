@@ -35,7 +35,7 @@ class Login extends StatelessWidget {
                   Center(
                     child: AspectRatio(
                         aspectRatio: 18 / 12,
-                        child: assetImage(AppAssets.sallerLogo)),
+                        child: assetLottieAnimation(path: "assets/lottie/BW9l4PezSJ.json")),
                   ),
                   AppString.loginString.mediumRoboto(
                     fontColor: Colors.black,
@@ -59,6 +59,10 @@ class Login extends StatelessWidget {
                       prefixIcon: const Icon(Icons.email),
                     ),
                   ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+
                   SizedBox(
                     height: 2.h,
                   ),
@@ -95,6 +99,7 @@ class Login extends StatelessWidget {
                       );
                     },
                   ),
+                  appTextFormField(labelText: "Password",prefixIcon:Image.asset("assets/images/padlock.png",width: 10,height: 10,scale: 3,) ),
                   0.1.h.addHSpace(),
                   Align(
                     alignment: Alignment.centerRight,

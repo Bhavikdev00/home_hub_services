@@ -291,6 +291,34 @@ Widget createLoginButton(
   );
 }
 
+
+
+Widget appTextFormField({TextEditingController? controller,String? labelText,Widget? prefixIcon,Widget? suffixIcon ,bool? obscureText,void Function(String?)? onChanged,String? Function(String?)? validator}){
+  return TextFormField(
+    onChanged:onChanged ?? (value) {
+
+    },
+    validator:validator ?? (value) {
+
+    },
+    controller:controller ,
+    cursorColor: appColor,
+    textAlignVertical: TextAlignVertical.center,
+    style: TextStyle(color: Colors.black,fontSize: 15.sp,letterSpacing: 1),
+    obscureText:obscureText ?? false ,
+    decoration: InputDecoration(
+      labelText: labelText ?? "",
+      labelStyle: TextStyle(color: Colors.black.withOpacity(0.8),fontSize: 14.sp,letterSpacing: 1),
+      filled: true,
+      fillColor:Colors.grey[100],
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15),borderSide: const BorderSide(color: Colors.transparent),),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15),borderSide: const BorderSide(color: Colors.transparent),),
+    ),
+  );
+}
+
 Widget appButton(
     {double? height,
       double? width,
