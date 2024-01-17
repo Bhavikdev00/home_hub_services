@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -11,15 +12,25 @@ import '../../constraint/app_color.dart';
 import '../../constraint/app_string.dart';
 import 'RegisterDetailsController.dart';
 
-class RegisterDetails extends StatelessWidget {
+class RegisterDetails extends StatefulWidget {
   RegisterDetails({super.key});
 
+  @override
+  State<RegisterDetails> createState() => _RegisterDetailsState();
+}
 
-
+class _RegisterDetailsState extends State<RegisterDetails> {
   RegisterDetailsController _registerDetailsController =
       Get.put(RegisterDetailsController());
 
   final _globalKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic>? arguments = Get.arguments as Map<String, dynamic>?;
@@ -233,41 +244,45 @@ class RegisterDetails extends StatelessWidget {
                     ),
                   ),
                       2.h.addHSpace(),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                      Obx(
+                        () => _registerDetailsController.selectedServices == null ? Container(): Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select a Category'; // Validation message
-                            }
-                            return null; // Return null if validation succeeds
-                          },
-                          value:_registerDetailsController.selectedServices.value,
-                          hint: const Text('Selected Services'),
-                          onChanged: (String? newValue) {
-                            _registerDetailsController.setSelectedService(newValue);
-                          },
-                          items: _registerDetailsController.selectServices.map((String service) {
-                            return DropdownMenuItem<String>(
-                              value: service,
-                              child: Text(service),
-                            );
-                          }).toList(),
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a Category'; // Validation message
+                              }
+                              return null; // Return null if validation succeeds
+                            },
+                            value:_registerDetailsController.selectedServices.value,
+                            hint: const Text('Selected Services'),
+                            onChanged: (String? newValue) {
+                              _registerDetailsController.setSelectedService(newValue);
+                            },
+                            items: _registerDetailsController.selectServices.value.map((String service) {
+                              print(service);
+                              return DropdownMenuItem<String>(
+                                value: service,
+                                child: Text(service),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+
               2.h.addHSpace(),
               Obx(
                 () => _registerDetailsController.isLoading.value ?

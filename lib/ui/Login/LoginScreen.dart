@@ -56,7 +56,7 @@ class Login extends StatelessWidget {
                       labelText: "Email",
                       filled: true,
                       fillColor: Colors.grey[100],
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email),
                     ),
                   ),
                   SizedBox(
@@ -95,9 +95,17 @@ class Login extends StatelessWidget {
                       );
                     },
                   ),
-                  SizedBox(
-                    height: 3.h,
+                  0.1.h.addHSpace(),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: MaterialButton(
+                      onPressed: () {
+                        Get.toNamed(Routes.forgetPassword);
+                      },
+                      child: "Forget Password".mediumReadex(),
+                    ),
                   ),
+                  1.h.addHSpace(),
                   Obx(
                     () => _controller.isLoading.value
                         ? LoadingAnimationWidget.hexagonDots(
@@ -107,7 +115,7 @@ class Login extends StatelessWidget {
                               if (_globel.currentState!.validate()) {
                                 var checkStatus = await _controller.signInWithEmailAndPassword();
                                 if(checkStatus is UserCredential){
-                                  Get.offAllNamed(Routes.homeScreen);
+                                  Get.offAllNamed(Routes.navbarRoots);
                                 }
                                 else{
                                   print("Error");
@@ -132,7 +140,7 @@ class Login extends StatelessWidget {
                         ),
                         2.w.addWSpace(),
                         // Adding space between the divider and text
-                        Expanded(
+                        const Expanded(
                           flex: 3,
                           child: Text(
                             "or continue with",
@@ -148,7 +156,7 @@ class Login extends StatelessWidget {
                         ),
                         SizedBox(width: 3.w),
                         // Adding space between the text and divider
-                        Expanded(
+                        const Expanded(
                           flex: 2,
                           child: Divider(
                             thickness: 2,

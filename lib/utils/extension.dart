@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
@@ -211,10 +213,12 @@ extension Roboto on String {
     return Text(
       this,
       overflow: textOverflow,
+      maxLines: 1,
       style: TextStyle(
         color: fontColor ?? appColor,
         fontSize: fontSize ?? 16,
         fontWeight: FontWeight.w400,
+
         decoration: textDecoration ?? TextDecoration.none,
       ),
       textAlign: textAlign,
@@ -309,4 +313,38 @@ Widget appButton(
   );
 }
 
+Widget CustomRoundedIcons({
+  required IconData iconData,
+  required VoidCallback onPress,
+}){
+  return SizedBox(
+    height: 40,
+    width: 40,
+    child: MaterialButton(
+      onPressed: onPress,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(40),
+      ),
+      padding: EdgeInsets.zero,
+      color: Colors.white,
+      child: Icon(
+        iconData,
+        color: Colors.black45,
+      ),
+    ),
+  );
+}
 
+
+Widget circularImages({
+  required String imageUrl,
+}){
+  return  ClipOval(
+    child: CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.cover,
+      progressIndicatorBuilder: (context, url, downloadProgress) =>
+          LoadingAnimationWidget.hexagonDots(color: appColor, size: 3.h),
+    ),
+  );
+}

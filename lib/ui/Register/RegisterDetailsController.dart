@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,10 +19,7 @@ import '../../getstorage/StorageClass.dart';
 
 
 class RegisterDetailsController extends GetxController{
-
-
   Rx<User?> user = Rx<User?>(FirebaseAuth.instance.currentUser);
-
   CollectionReference ServiceProfile = FirebaseFirestore.instance.collection('ServiceProviderProfileInfo');
   CollectionReference otpService = FirebaseFirestore.instance.collection('otp');
   final TextEditingController fName = TextEditingController();
@@ -33,10 +31,18 @@ class RegisterDetailsController extends GetxController{
   final TextEditingController address = TextEditingController();
   RxBool isLoading = false.obs;
   RxBool loadAddData = false.obs;
-  var selectServices = <String>[
-    "Home",
-    "Shop",
-  ].obs;
+
+  // ************************ Image Adhere Pick ************************
+
+  Rx<File?> imageFile = Rx<File?>(null);
+  Future<void> pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      imageFile.value = File(pickedFile.path);
+    }
+  }
 
   @override
   void onClose() {
@@ -45,14 +51,18 @@ class RegisterDetailsController extends GetxController{
     address.dispose();
     contact.dispose();
     contactOptional.dispose();
+    for (var controller in controllers) {
+      controller.dispose();
+    }
     super.onClose();
   }
   @override
-  void onInit() {
+   void onInit() async {
     super.onInit();
     controllers = List.generate(6, (_) => TextEditingController());
     otpValues = List.generate(6, (_) => RxString(''));
     user.bindStream(_auth.authStateChanges());
+    loadCategoryList();
     _bindControllers();
   }
   void initTimer() {
@@ -60,20 +70,32 @@ class RegisterDetailsController extends GetxController{
     //
     // });
   }
+
+
   var selectedServices = Rx<String?>(null);
   void setSelectedService(String? service) {
     selectedServices.value = service;
   }
+  RxList<String> selectServices = <String>[].obs;
+  Future<void> loadCategoryList() async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection("servicesInfo").get();
 
-  Rx<File?> imageFile = Rx<File?>(null);
-  Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    print(snapshot.docs.length);
+    try {
+      for (QueryDocumentSnapshot<Map<String, dynamic>> document
+      in snapshot.docs) {
+        // Change "fieldName" to the actual field name you want to extract
+        String fieldValue = document['ServicesName'];
 
-    if (pickedFile != null) {
-      imageFile.value = File(pickedFile.path);
-    } else {
-      print('No image selected.');
+        // Add the field value to the list
+        if (fieldValue != null) {
+          selectServices.add(fieldValue);
+        }
+      }
+
+    } catch (e) {
+      print('Error loading category list: $e');
+      // Handle the error if necessary
     }
   }
 
@@ -91,7 +113,6 @@ class RegisterDetailsController extends GetxController{
       }
 
     });
-    isLoading(false);
   }
 
 
@@ -162,9 +183,9 @@ class RegisterDetailsController extends GetxController{
 
 <body>
   <div class="container">
-    <h2>Home Hub Email Verification</h2>
+    <h2>Home Hub Services Email Verification</h2>
     <p>Dear User,</p>
-    <p>Your verification code for Home Hub is:</p>
+    <p>Your verification code for Home Hub Services is:</p>
     <h1 class="verification-code">$otp</h1>
     <p class="expire-message">This code will expire in 5 minutes.</p>
     <p class="notice">Please do not share this code with anyone for security reasons.</p>
@@ -184,6 +205,7 @@ class RegisterDetailsController extends GetxController{
       final sendReport = await send(message, smtpServer);
 
       print('Message sent: ${sendReport.toString()}');
+      isLoading(false);
       await sendOTPTOFirebase(email,otp);
 
     } on MailerException catch (e) {
@@ -255,6 +277,7 @@ class RegisterDetailsController extends GetxController{
         email: email,
         password: password,
       );
+
       print('Account created: ${userCredential.user!.uid}');
 
     }on FirebaseAuthException catch (e){
@@ -272,7 +295,10 @@ class RegisterDetailsController extends GetxController{
     try{
       await createAccount(email,password);
       var image = await uploadServicesUserImages(imageFile.value!);
-      ServicesData service = ServicesData(Uid: user.value!.uid, Images: image, email: user.value!.email!, contectnumber: contact.text, contectNumber2: contactOptional != null ? contactOptional.text : "", address: address.text.toString().trim(), services: selectedServices.value!);
+      ServicesData service = ServicesData(Uid: user.value!.uid, Images: image, email: user.value!.email!, contectnumber: contact.text, contectNumber2: contactOptional != null ? contactOptional.text : "", address: address.text.toString().trim(), services: selectedServices.value!,password: password,fname: fName.text.toString().trim(),lname: lName.text.toString().trim());
+
+      String Names = "${fName.text.toString().trim()} ${lName.text.toString().trim()}";
+      user.value!.updateDisplayName(Names);
       DocumentReference documentReference = await ServiceProfile.add(service.tomap());
       String docId = documentReference.id;
       service.Did=docId;
@@ -290,6 +316,8 @@ class RegisterDetailsController extends GetxController{
       value.value = '';
     }
   }
+
+
   Future<String> uploadServicesUserImages(File imageFile) async {
     String url = "";
     String tempFile = basename(imageFile.path);
@@ -313,4 +341,45 @@ class RegisterDetailsController extends GetxController{
       });
     }
   }
+
+
+
+
+
+
+
+
+  // ********************************* Adhare Card Pick Images ***************************
+
+
+  Rx<File?> aPic1 = Rx<File?>(null);
+
+  Rx<File?> aPic2 = Rx<File?>(null);
+  Future<void> pickImageForAdhere1() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      aPic1.value = File(pickedFile.path);
+    } else {
+      print('No image selected.');
+    }
+  }
+  Future<void> pickImageForAdhere2() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      aPic2.value = File(pickedFile.path);
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  // Future<void> loadCategoryList() async {
+  //   QuerySnapshot querySnapshot = await servicesCollection.get();
+  //   for (QueryDocumentSnapshot document in querySnapshot.docs) {
+  //     selectServices.add(document.get('ServicesName'));
+  //   }
+  // }
 }

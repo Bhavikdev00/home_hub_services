@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,9 +6,7 @@ import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../constraint/app_color.dart';
-import '../../getstorage/StorageClass.dart';
 import 'RegisterDetailsController.dart';
 
 class OtpCheck extends StatelessWidget {
@@ -31,7 +28,7 @@ class OtpCheck extends StatelessWidget {
                     color: appColor, size: 5.h):  appButton(onTap: () async {
                   var check = await _registerContoller.checkOTPFromFirestore(email,password);
                  if(check){
-                   Get.offAllNamed(Routes.homeScreen);
+                   Get.offAllNamed(Routes.navbarRoots);
                  }else{
                    print("False");
                  }

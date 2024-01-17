@@ -5,4 +5,8 @@ class AppString {
   static const onBording3 = "Let's make\nawesome changes\nto your home";
   static const loginString = "Login to your \nAccount";
   static const registerString = "Create your \nAccount";
+  static const forgetPasswordOtp = "Please check your \nemail";
+  static const forgetPasswordTital = "We’ve sent a code to";
+  static const resetPassword = "Reset password";
+  static const resetPasswordTital = "Please type something you’ll remember";
 }

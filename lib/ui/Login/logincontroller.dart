@@ -35,10 +35,12 @@ class LoginController extends GetxController {
   Future<dynamic> signInWithEmailAndPassword() async {
     try {
       isLoading(true);
+      print("Call");
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+      print("Call1");
       // Get.offAllNamed(Routes.homeScreen);
       _storageService.loginStatusCheck(true);
       isLoading(false);

@@ -29,7 +29,9 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   image_picker: ^1.0.6
+  syncfusion_flutter_charts: ^24.1.45+2
   material_design_icons_flutter: ^7.0.7296
+  custom_clippers: ^2.0.0
   awesome_icons: ^1.1.0
   firebase_auth: ^4.16.0
   get: ^4.6.6
@@ -40,6 +42,7 @@ dependencies:
   firebase_core: ^2.15.0
   loading_animation_widget: ^1.2.0+4
   firebase_storage: ^11.6.0
+  cached_network_image: ^3.3.1
   mailer: ^6.0.1
   otp: ^3.1.4
   flutter:

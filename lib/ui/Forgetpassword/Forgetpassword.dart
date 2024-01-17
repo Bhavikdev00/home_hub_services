@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/constraint/app_assets.dart';
 import 'package:home_hub_services/ui/Forgetpassword/OtpVaryfyContoller.dart';
+import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'package:otp/otp.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:sizer/sizer.dart';
 
-class OtpVerify extends StatelessWidget {
-  OtpVerify({super.key});
+import '../../constraint/app_color.dart';
+
+class ForgetPassword extends StatelessWidget {
+  ForgetPassword({super.key});
 
   final _emails = TextEditingController();
   final _globelKey = GlobalKey<FormState>();
@@ -18,18 +24,19 @@ class OtpVerify extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Text(
-              "Home Hub Services",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      bottomSheet:  Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                "Home Hub Services",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
             ),
-          )
-        ],
-      ),
+          ],
+        ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -106,23 +113,33 @@ class OtpVerify extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    if (_globelKey.currentState!.validate()) {
-                                      var emails = _emails.text.toString();
-                                      // _otpVaryContoller.sendVerificationOtp(email: emails);
-
-                                    } else {
-                                      print("Invalid Emails");
-                                    }
-                                  },
-                                  child: Text("Send"))
+                              Obx(
+                                () => _otpVaryContoller.isLoading.value ? LoadingAnimationWidget.hexagonDots(
+                                    color: appColor, size: 5.h): ElevatedButton(
+                                    onPressed: () async {
+                                      // var emails = _emails.text.toString();
+                                      // Get.toNamed(Routes.otpInForgetPassword,arguments: {
+                                      //   "email" : emails
+                                      // });
+                                      if (_globelKey.currentState!.validate()) {
+                                         var emails = _emails.text.toString();
+                                         await _otpVaryContoller.Otpsend(emails);
+                                         Get.toNamed(Routes.otpInForgetPassword,arguments: {
+                                          "email" : emails
+                                         });
+                                      } else {
+                                        print("Invalid Emails");
+                                      }
+                                    },
+                                    child: Text("Send")),
+                              )
                             ],
                           )
                         ],
                       ),
                     ),
-                  )
+                  ),
+
                 ],
               ),
             ),

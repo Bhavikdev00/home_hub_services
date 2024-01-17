@@ -5,6 +5,7 @@ class StorageService{
   late GetStorage _storage;
   static String registerStatus = "Register";
   static String loginStatus = "LoginStatus";
+
   factory StorageService() {
     return _instance;
   }
@@ -32,5 +33,7 @@ class StorageService{
   dynamic getRegisterStatus() {
     return _storage.read(registerStatus) ?? false;
   }
-
+  Future<void> removeDAta() async {
+    await _storage.erase();
+  }
 }

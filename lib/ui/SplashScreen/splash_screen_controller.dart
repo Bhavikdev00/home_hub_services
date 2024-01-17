@@ -4,8 +4,11 @@ import 'package:get/get.dart';
 
 import '../../getstorage/StorageClass.dart';
 import '../../utils/app_routes.dart';
+import '../HomeScreen/authservices.dart';
 
 class SplashScreenController extends GetxController {
+  final AuthService _authService = Get.put(AuthService());
+
   String displayText = '';
   int index = 0;
   final StorageService _storageService = StorageService();
@@ -21,13 +24,16 @@ class SplashScreenController extends GetxController {
   void _navigate() {
     Future.delayed(const Duration(seconds: 3)).then(
       (value) {
-        if(_storageService.getLoginStatus() || _storageService.getRegisterStatus()){
-           Get.offAllNamed(Routes.homeScreen);
-        }else{
+        if(_authService.currentUser != null){
+          if(_storageService.getLoginStatus() || _storageService.getRegisterStatus()){
+            Get.offAllNamed(Routes.navbarRoots);
+          }
+        }else {
+          // User is not logged in, navigate to the login screen
           Get.offAllNamed(Routes.loginScreen);
         }
-      },
-    );
+       },
+     );
   }
 
   void _startTyping() {
