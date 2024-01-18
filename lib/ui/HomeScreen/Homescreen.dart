@@ -152,9 +152,10 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     Container(
                                         width: 110,
-
                                         child: appButton(onTap: (){},text: "Accept")),
-                                    IconButton(onPressed: () {
+                                    IconButton(onPressed: (
+                                        
+                                        ) {
                                       
                                     }, icon: const Icon(Icons.delete))
                                   ],

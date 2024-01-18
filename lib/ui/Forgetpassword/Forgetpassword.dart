@@ -24,19 +24,19 @@ class ForgetPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet:  Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                "Home Hub Services",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
+      bottomSheet: const Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              "Home Hub Services",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -46,7 +46,7 @@ class ForgetPassword extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Text(
                         "OTP Verification",
@@ -56,7 +56,7 @@ class ForgetPassword extends StatelessWidget {
                     ],
                   ),
                   7.h.addHSpace(),
-                  Row(
+                  const Row(
                     children: [
                       Text(
                         "Don't worry",
@@ -65,7 +65,7 @@ class ForgetPassword extends StatelessWidget {
                       )
                     ],
                   ),
-                  Text(
+                  const Text(
                     "We are here to help you to recover your password Enter the email address you used when you joined and we'll send you the link to reset your Password ",
                     style: TextStyle(fontSize: 16),
                   ),
@@ -80,7 +80,7 @@ class ForgetPassword extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Email"),
+                          const Text("Email"),
                           2.h.addHSpace(),
                           TextFormField(
                             validator: (value) {
@@ -106,7 +106,7 @@ class ForgetPassword extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Row(
+                                child: const Row(
                                   children: [
                                     Icon(Icons.arrow_back_ios_new),
                                     Text("Back")
@@ -114,24 +114,29 @@ class ForgetPassword extends StatelessWidget {
                                 ),
                               ),
                               Obx(
-                                () => _otpVaryContoller.isLoading.value ? LoadingAnimationWidget.hexagonDots(
-                                    color: appColor, size: 5.h): ElevatedButton(
-                                    onPressed: () async {
-                                      // var emails = _emails.text.toString();
-                                      // Get.toNamed(Routes.otpInForgetPassword,arguments: {
-                                      //   "email" : emails
-                                      // });
-                                      if (_globelKey.currentState!.validate()) {
-                                         var emails = _emails.text.toString();
-                                         await _otpVaryContoller.Otpsend(emails);
-                                         Get.toNamed(Routes.otpInForgetPassword,arguments: {
-                                          "email" : emails
-                                         });
-                                      } else {
-                                        print("Invalid Emails");
-                                      }
-                                    },
-                                    child: Text("Send")),
+                                () => _otpVaryContoller.isLoading.value
+                                    ? LoadingAnimationWidget.hexagonDots(
+                                        color: appColor, size: 5.h)
+                                    : ElevatedButton(
+                                        onPressed: () async {
+                                          // var emails = _emails.text.toString();
+                                          // Get.toNamed(Routes.otpInForgetPassword,arguments: {
+                                          //   "email" : emails
+                                          // });
+                                          if (_globelKey.currentState!
+                                              .validate()) {
+                                            var emails =
+                                                _emails.text.toString();
+                                            await _otpVaryContoller.Otpsend(
+                                                emails);
+                                            Get.toNamed(
+                                                Routes.otpInForgetPassword,
+                                                arguments: {"email": emails});
+                                          } else {
+                                            print("Invalid Emails");
+                                          }
+                                        },
+                                        child: const Text("Send")),
                               )
                             ],
                           )
@@ -139,7 +144,6 @@ class ForgetPassword extends StatelessWidget {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -148,6 +152,4 @@ class ForgetPassword extends StatelessWidget {
       ),
     );
   }
-
-
 }

@@ -19,19 +19,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
-      return GetMaterialApp(
-        debugShowCheckedModeBanner: true,
-        theme: ThemeData(
-          useMaterial3: true,
-        ),
-        initialRoute: Routes.splashScreen,
-        getPages: Routes.getPages,
-
-      );
-    },);
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: true,
+          theme: ThemeData(
+            useMaterial3: true,
+          ),
+          initialRoute: Routes.splashScreen,
+          getPages: Routes.getPages,
+        );
+      },
+    );
   }
 }
-
-
-
