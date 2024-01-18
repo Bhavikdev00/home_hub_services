@@ -35,40 +35,42 @@ class Login extends StatelessWidget {
                   Center(
                     child: AspectRatio(
                         aspectRatio: 18 / 12,
-                        child: assetLottieAnimation(path: "assets/lottie/BW9l4PezSJ.json")),
+                        child: assetLottieAnimation(
+                            path: "assets/lottie/BW9l4PezSJ.json")),
                   ),
                   AppString.loginString.mediumRoboto(
                     fontColor: Colors.black,
                     fontSize: 38,
                   ),
                   4.h.addHSpace(),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || !AppAssets.isvalidemail(value)) {
-                        return "Enter the Valid Email";
-                      } else {
-                        return null;
-                      }
+                  Obx(
+                    () {
+                      return appTextFormField(
+                        validator: (value) {
+                          if (value == null || !AppAssets.isvalidemail(value)) {
+                            return "Enter the Valid Email";
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: _controller.emailController,
+                        labelText: "Email",
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.black,
+                        ),
+                      );
                     },
-                    controller: _controller.emailController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      labelText: "Email",
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      prefixIcon: const Icon(Icons.email),
-                    ),
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
-
                   SizedBox(
                     height: 2.h,
                   ),
                   Obx(
                     () {
-                      return TextFormField(
+                      return appTextFormField(
                         obscureText: _controller.isPasswordVisible.value,
                         controller: _controller.passwordController,
                         validator: (value) {
@@ -79,27 +81,26 @@ class Login extends StatelessWidget {
                             return null;
                           }
                         },
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: "Password",
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          prefixIcon: Icon(MdiIcons.formTextboxPassword),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _controller.isPasswordVisible.value
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              _controller.togglePasswordVisibility();
-                            },
+                        labelText: "Password",
+                        prefixIcon: Image.asset(
+                          "assets/images/padlock.png",
+                          width: 10,
+                          height: 10,
+                          scale: 3,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _controller.isPasswordVisible.value
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
+                          onPressed: () {
+                            _controller.togglePasswordVisibility();
+                          },
                         ),
                       );
                     },
                   ),
-                  appTextFormField(labelText: "Password",prefixIcon:Image.asset("assets/images/padlock.png",width: 10,height: 10,scale: 3,) ),
                   0.1.h.addHSpace(),
                   Align(
                     alignment: Alignment.centerRight,
@@ -118,11 +119,11 @@ class Login extends StatelessWidget {
                         : appButton(
                             onTap: () async {
                               if (_globel.currentState!.validate()) {
-                                var checkStatus = await _controller.signInWithEmailAndPassword();
-                                if(checkStatus is UserCredential){
+                                var checkStatus = await _controller
+                                    .signInWithEmailAndPassword();
+                                if (checkStatus is UserCredential) {
                                   Get.offAllNamed(Routes.navbarRoots);
-                                }
-                                else{
+                                } else {
                                   print("Error");
                                 }
                               } else {
