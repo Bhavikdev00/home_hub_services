@@ -26,9 +26,10 @@ class Register extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
                   child: InkWell(
@@ -43,16 +44,15 @@ class Register extends StatelessWidget {
                 ),
               ),
               1.w.addHSpace(),
-              Container(
-                // color: Colors.grey,
-                child: Center(
-                  child: AspectRatio(
-                      aspectRatio: 19 / 15,
-                      child: assetImage(AppAssets.registerLogo)),
-                ),
+              Center(
+                child: AspectRatio(
+                    aspectRatio: 19 / 12,
+                    child: assetLottieAnimation(
+                        path: AppAssets.reistrationAnimation)),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Form(
                   key: _globel,
                   child: Column(
@@ -62,9 +62,8 @@ class Register extends StatelessWidget {
                         fontColor: Colors.black,
                         fontSize: 35,
                       ),
-                      1.h.addHSpace(),
-                      TextFormField(
-                        controller: _registerController.emailController,
+                      3.h.addHSpace(),
+                      appTextFormField(
                         validator: (value) {
                           if (value == null || !AppAssets.isvalidemail(value)) {
                             return "Enter the Valid Email";
@@ -72,34 +71,35 @@ class Register extends StatelessWidget {
                             return null;
                           }
                         },
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: "Email",
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.email),
+                        controller: _registerController.emailController,
+                        labelText: "Email",
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.black,
                         ),
                       ),
-                      1.h.addHSpace(),
-                      Obx(() {
-                        return TextFormField(
-                          obscureText:
-                              _registerController.isPasswordVisible.value,
-                          controller: _registerController.passwordController,
-                          validator: (value) {
-                            if (value == null ||
-                                !AppAssets.isvalidpassword(value)) {
-                              return "Enter the Valid Password";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
+                      2.h.addHSpace(),
+                      Obx(
+                        () {
+                          return appTextFormField(
+                            obscureText:
+                                _registerController.isPasswordVisible.value,
+                            controller: _registerController.passwordController,
+                            validator: (value) {
+                              if (value == null ||
+                                  !AppAssets.isvalidpassword(value)) {
+                                return "Enter the validPassword";
+                              } else {
+                                return null;
+                              }
+                            },
                             labelText: "Password",
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            prefixIcon: Icon(Icons.password),
+                            prefixIcon: Image.asset(
+                              "assets/images/padlock.png",
+                              width: 10,
+                              height: 10,
+                              scale: 3,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _registerController.isPasswordVisible.value
@@ -110,10 +110,10 @@ class Register extends StatelessWidget {
                                 _registerController.togglePasswordVisibility();
                               },
                             ),
-                          ),
-                        );
-                      }),
-                      2.h.addHSpace(),
+                          );
+                        },
+                      ),
+                      5.h.addHSpace(),
                       appButton(
                           onTap: () {
                             if (_globel.currentState!.validate()) {

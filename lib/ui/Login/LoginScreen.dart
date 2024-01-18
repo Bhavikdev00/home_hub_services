@@ -43,24 +43,20 @@ class Login extends StatelessWidget {
                     fontSize: 38,
                   ),
                   4.h.addHSpace(),
-                  Obx(
-                    () {
-                      return appTextFormField(
-                        validator: (value) {
-                          if (value == null || !AppAssets.isvalidemail(value)) {
-                            return "Enter the Valid Email";
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _controller.emailController,
-                        labelText: "Email",
-                        prefixIcon: const Icon(
-                          Icons.email,
-                          color: Colors.black,
-                        ),
-                      );
+                  appTextFormField(
+                    validator: (value) {
+                      if (value == null || !AppAssets.isvalidemail(value)) {
+                        return "Enter the Valid Email";
+                      } else {
+                        return null;
+                      }
                     },
+                    controller: _controller.emailController,
+                    labelText: "Email",
+                    prefixIcon: const Icon(
+                      Icons.email,
+                      color: Colors.black,
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,
