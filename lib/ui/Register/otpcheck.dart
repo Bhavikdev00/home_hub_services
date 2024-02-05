@@ -26,13 +26,12 @@ class OtpCheck extends StatelessWidget {
               Obx(
                 () => _registerContoller.loadAddData.value ? LoadingAnimationWidget.hexagonDots(
                     color: appColor, size: 5.h):  appButton(onTap: () async {
-                  var check = await _registerContoller.checkOTPFromFirestore(email,password);
-                 if(check){
-                   Get.offAllNamed(Routes.navbarRoots);
+                   var check = await _registerContoller.checkOTPFromFirestore(email,password);
+                   if(check){
+                     _showCustomDialog(context);
                  }else{
                    print("False");
                  }
-                  // _registerContoller.getCombinedOtp();
                 },text: "Submit"),
               ),
               5.h.addHSpace(),
@@ -135,6 +134,24 @@ class OtpCheck extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  void _showCustomDialog(BuildContext context) {
+    showDialog<String>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title:const Text('Request Send Admin'),
+        content: const Text('Your request is send to admin wait for 1 or 2 working days accepted request to show notification!'),
+        actions: <Widget>[
+        appButton(
+            text: "Agree",
+            onTap: (){
+            Get.offAllNamed(Routes.loginScreen);
+        })
+        ],
       ),
     );
   }

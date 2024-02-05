@@ -12,8 +12,8 @@ class SettingsControllers extends GetxController {
   StorageService _storageService = StorageService();
   FirebaseAuth _auth = FirebaseAuth.instance;
   RxString displayName = ''.obs;
-  RxBool imageload = true.obs;
   RxString services = ''.obs;
+  RxString Name = ''.obs;
   RxString NetworkImages = ''.obs;
   @override
   void onInit() {
@@ -23,10 +23,7 @@ class SettingsControllers extends GetxController {
 
   Future<void> loadUserData() async {
     isLoading.value = true;
-
     String? uid = _auth?.currentUser!.uid;
-    _setDisplayName(_auth!.currentUser);
-
     print("its a Call");
     // print(_auth?.uid);
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
@@ -37,22 +34,21 @@ class SettingsControllers extends GetxController {
         .get();
     Map<String, dynamic> documentData = querySnapshot.docs.first.data();
     String fieldValue = documentData['services'];
+    String fname = documentData['fname'];
+    String lname = documentData['lname'];
     String images = documentData['Images'];
-    getImageLoad(images);
+    NetworkImages.value = images;
+    Name.value = "${fname} ${lname}";
     services.value = fieldValue;
     isLoading.value = false;
-  }
-
-  void _setDisplayName(User? user) {
-    displayName.value = user?.displayName ?? '';
-    print(user!.displayName);
+    update();
   }
 
 
   getImageLoad(String images){
     try{
-      NetworkImages.value = images;
-      imageload.value = false;
+
+
     }catch(e){
       print("Image Call Error");
     }

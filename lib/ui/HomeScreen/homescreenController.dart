@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/GDPDATA.dart';
 
@@ -8,6 +9,7 @@ import '../../ModelClasses/servicesProvider.dart';
 import 'authservices.dart';
 
 class HomeScreenController extends GetxController{
+
   final AuthService _authService = Get.put(AuthService());
   @override
   void onInit() {
@@ -19,7 +21,8 @@ class HomeScreenController extends GetxController{
   RxString displayName = ''.obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   RxBool isLoading = true.obs;
-  Rx<ServicesData> userData = ServicesData(Uid: "", fname: "", lname: "", Images: "", email: "", contectnumber: "", contectNumber2: "", address: "", services: "", password: "").obs;
+  RxBool LoadImages = true.obs;
+  Rx<ServicesData> userData = ServicesData(Uid: "", fname: "", lname: "", Images: "", email: "", contectnumber: "", contectNumber2: "", address: "", services: "", password: "",useraadharcard: "").obs;
 
   User? get currentUser => user.value;
   void _setDisplayName(User? user) {
@@ -32,19 +35,23 @@ class HomeScreenController extends GetxController{
     ever(_authService.user, (User? user) async {
       if (user != null) {
         String uid = user.uid;
+        print(uid);
         _setDisplayName(user);
         QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
                 .instance
-                .collection('ServiceProviderProfileInfo')
+                .collection('service_providers')
                 .where('Uid', isEqualTo: uid)
                 .limit(1)
                 .get();
         if (querySnapshot.docs.isNotEmpty) {
                 userData!.value = ServicesData.formMap(querySnapshot.docs.first.data());
+                LoadImages.value = false;
                 print("Success");
                 isLoading(false);
+                update();
               } else {
           isLoading(false);
+          update();
                 print("Data IS Empty");
               }
 
@@ -70,5 +77,8 @@ class HomeScreenController extends GetxController{
     return chatData;
 
   }
+
+
+
 
 }

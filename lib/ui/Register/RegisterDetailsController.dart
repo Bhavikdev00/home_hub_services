@@ -20,7 +20,7 @@ import '../../getstorage/StorageClass.dart';
 
 class RegisterDetailsController extends GetxController{
   Rx<User?> user = Rx<User?>(FirebaseAuth.instance.currentUser);
-  CollectionReference ServiceProfile = FirebaseFirestore.instance.collection('ServiceProviderProfileInfo');
+  CollectionReference ServiceProfile = FirebaseFirestore.instance.collection('service_provider_requests');
   CollectionReference otpService = FirebaseFirestore.instance.collection('otp');
   final TextEditingController fName = TextEditingController();
   final TextEditingController lName = TextEditingController();
@@ -32,15 +32,26 @@ class RegisterDetailsController extends GetxController{
   RxBool isLoading = false.obs;
   RxBool loadAddData = false.obs;
 
-  // ************************ Image Adhere Pick ************************
+  // ************************ Image user And Aadhare Pick ************************
 
   Rx<File?> imageFile = Rx<File?>(null);
+  Rx<File?> aadharCard = Rx<File?>(null);
   Future<void> pickImage() async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       imageFile.value = File(pickedFile.path);
+    }
+  }
+
+
+  Future<void> pickImageaadhare() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+        aadharCard.value = File(pickedFile.path);
     }
   }
 
@@ -246,10 +257,8 @@ class RegisterDetailsController extends GetxController{
         int storedTimeInSeconds = timestamp.seconds;
         int timeDifference = currentTimeInSeconds - storedTimeInSeconds;
         String otp =  otpValues.map((otpValue) => otpValue.value).join();
-        print(otp);
         if (otp == storedOTP && timeDifference <= 200) {
              await AddData(email,password);
-           _storageService.registerStatusCheck(true);
            loadAddData(false);
           return true; // OTP matches and within the time limit
         }
@@ -295,8 +304,8 @@ class RegisterDetailsController extends GetxController{
     try{
       await createAccount(email,password);
       var image = await uploadServicesUserImages(imageFile.value!);
-      ServicesData service = ServicesData(Uid: user.value!.uid, Images: image, email: user.value!.email!, contectnumber: contact.text, contectNumber2: contactOptional != null ? contactOptional.text : "", address: address.text.toString().trim(), services: selectedServices.value!,password: password,fname: fName.text.toString().trim(),lname: lName.text.toString().trim());
-
+      var userAdhareCard = await UploadAddhareCardUser(aadharCard.value!,email,aadharCard.value);
+      ServicesData service = ServicesData(Uid: user.value!.uid, Images: image, email: user.value!.email!, contectnumber: contact.text, contectNumber2: contactOptional != null ? contactOptional.text : "", address: address.text.toString().trim(), services: selectedServices.value!,password: password,fname: fName.text.toString().trim(),lname: lName.text.toString().trim(),useraadharcard: userAdhareCard,status: "Pending");
       String Names = "${fName.text.toString().trim()} ${lName.text.toString().trim()}";
       user.value!.updateDisplayName(Names);
       DocumentReference documentReference = await ServiceProfile.add(service.tomap());
@@ -334,6 +343,22 @@ class RegisterDetailsController extends GetxController{
     return url;
   }
 
+  UploadAddhareCardUser(File file, String email, File? imageFile) async {
+    String url = "";
+    String tempFile = basename(imageFile!.path);
+    String filename = email;
+    var ex = extension(tempFile);
+    var filenames = "$filename$ex";
+    try{
+      var image = await _storageRef.child("aadhar_card").child(filenames).putFile(file);
+      if(image != null){
+        url = await _storageRef.child("aadhar_card").child(filenames).getDownloadURL();
+      }
+    }on FirebaseException catch(e){
+      print("Error Is e");
+    }
+    return url;
+  }
   void _bindControllers() {
     for (int i = 0; i < controllers.length; i++) {
       controllers[i].addListener(() {
@@ -341,45 +366,4 @@ class RegisterDetailsController extends GetxController{
       });
     }
   }
-
-
-
-
-
-
-
-
-  // ********************************* Adhare Card Pick Images ***************************
-
-
-  Rx<File?> aPic1 = Rx<File?>(null);
-
-  Rx<File?> aPic2 = Rx<File?>(null);
-  Future<void> pickImageForAdhere1() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      aPic1.value = File(pickedFile.path);
-    } else {
-      print('No image selected.');
-    }
-  }
-  Future<void> pickImageForAdhere2() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      aPic2.value = File(pickedFile.path);
-    } else {
-      print('No image selected.');
-    }
-  }
-
-  // Future<void> loadCategoryList() async {
-  //   QuerySnapshot querySnapshot = await servicesCollection.get();
-  //   for (QueryDocumentSnapshot document in querySnapshot.docs) {
-  //     selectServices.add(document.get('ServicesName'));
-  //   }
-  // }
 }

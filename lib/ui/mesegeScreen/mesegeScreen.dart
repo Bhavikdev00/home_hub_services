@@ -70,7 +70,7 @@ class MessageScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Active Now",
+              child: Text("Active Client",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold
@@ -147,7 +147,7 @@ class MessageScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Recent Chart",
+              child: Text("Client Chart",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold

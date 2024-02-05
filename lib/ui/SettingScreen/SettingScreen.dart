@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:home_hub_services/ui/SettingScreen/settingScreenControlls.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
@@ -44,31 +45,24 @@ class _SettingScreenState extends State<SettingScreen> {
               SizedBox(
                 height: 30,
               ),
-              ListTile(
-                leading: Obx(
-                 () => _controllers.imageload.value ? LoadingAnimationWidget.hexagonDots(color: appColor, size: 2.h) : SizedBox(
-                     height: 54,
-                     width: 54,
-                     child: circularImages(imageUrl: _controllers.NetworkImages.value)),
+              Obx(() => _controllers.isLoading.value ? LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h): ListTile(
+                title: Text(_controllers.Name.value,style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 25,
+                ),),
+                leading: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: _controllers.NetworkImages.value,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                title: Obx(
-                      () {
-                        print(_controllers.NetworkImages.value);
-                    return Text(
-                      _controllers.displayName.value,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 25,
-                      ),
-                    );
-                  },
-                ),
-                subtitle: Obx(
-                      () {
-                    return Text(_controllers.services.value);
-                  },
-                ),
-              ),
+                subtitle: Text(_controllers.services.value),
+              )),
+
               Divider(
                 height: 50,
               ),
@@ -153,7 +147,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                },
                 leading: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(

@@ -365,12 +365,13 @@ Widget CustomRoundedIcons({
 
 
 Widget circularImages({
-  required String imageUrl,
+  required String? imageUrl,
 }){
   return  ClipOval(
     child: CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: imageUrl!,
       fit: BoxFit.cover,
+
       progressIndicatorBuilder: (context, url, downloadProgress) =>
           LoadingAnimationWidget.hexagonDots(color: appColor, size: 3.h),
     ),

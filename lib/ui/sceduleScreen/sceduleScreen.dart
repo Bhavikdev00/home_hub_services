@@ -13,7 +13,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   int buttonindex = 0;
   final _seduleWigits = [
     //UpcomingSedule
-    UpcomingSehedule(),
+    Today(),
     Center(
       child: Text("Completed"),
     ),
@@ -66,12 +66,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                           color: buttonindex == 0 ? Color(0xFF7165D6) : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
-                          "Upcoming ",
-                          style: TextStyle(
-                            color: buttonindex == 0 ? Colors.white : Colors.black38,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18),
+                          child: Text(
+                            "Today",
+                            style: TextStyle(
+                              color: buttonindex == 0 ? Colors.white : Colors.black38,
+                              fontSize: MediaQuery.of(context).size.width * 0.04,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -92,7 +95,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          "Completed ",
+                          "Completed",
                           style: TextStyle(
                             color: buttonindex == 1 ? Colors.white : Colors.black38,
                             fontSize: MediaQuery.of(context).size.width * 0.04,

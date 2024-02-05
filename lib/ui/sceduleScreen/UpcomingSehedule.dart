@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class UpcomingSehedule extends StatelessWidget {
-  const UpcomingSehedule({super.key});
+class Today extends StatelessWidget {
+  const Today({super.key});
 
   @override
   Widget build(BuildContext context) {
