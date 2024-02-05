@@ -28,7 +28,7 @@ class SettingsControllers extends GetxController {
     // print(_auth?.uid);
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
         .instance
-        .collection('ServiceProviderProfileInfo')
+        .collection('service_provider_requests')
         .where('Uid', isEqualTo: uid)
         .limit(1)
         .get();

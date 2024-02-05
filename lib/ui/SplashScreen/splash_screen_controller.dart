@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 import '../../getstorage/StorageClass.dart';
@@ -23,9 +24,14 @@ class SplashScreenController extends GetxController {
 
   void _navigate() {
     Future.delayed(const Duration(seconds: 3)).then(
-      (value) {
+      (value) async {
         if(_authService.currentUser != null){
-          Get.offAllNamed(Routes.navbarRoots);
+          bool checkLoginStatus  = await checkAdminAllow(_authService.currentUser!.uid);
+          if(!checkLoginStatus){
+            Get.offAllNamed(Routes.loginScreen);
+          }else{
+            Get.offAllNamed(Routes.navbarRoots);
+          }
         }else {
           // User is not logged in, navigate to the login screen
           Get.offAllNamed(Routes.navbarRoots);
@@ -46,5 +52,21 @@ class SplashScreenController extends GetxController {
         timer.cancel();
       }
     });
+  }
+
+  Future<bool> checkAdminAllow(String uid) async {
+    print("Call");
+    String Userid = uid;
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection('service_provider_requests')
+        .where('Uid', isEqualTo: uid)
+        .limit(1)
+        .get();
+    if(querySnapshot.docs.first["status"] == "Rejected"){
+      return false;
+    }else{
+      return true;
+    }
   }
 }

@@ -1,6 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
@@ -8,7 +6,7 @@ import 'package:home_hub_services/ui/HomeScreen/chart_container.dart';
 import 'package:home_hub_services/ui/HomeScreen/homescreenController.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shimmer/shimmer.dart';
+
 import 'package:sizer/sizer.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -50,14 +48,6 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: Divider(),
-            ),
-            ListTile(
-              onTap: () {
-
-              },
-              title: "LogOut".mediumReadex(fontColor: Colors.black),
-              leading: Icon(Icons.logout),
-              trailing: Icon(Icons.navigate_next),
             ),
           ],
         ),
@@ -158,13 +148,13 @@ class HomeScreen extends StatelessWidget {
                     ).paddingSymmetric(vertical: 15),
                     1.h.addHSpace(),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-
-                          height: 13.h,
+                          height: 15.h,
                           width: 47.w,
                           decoration: BoxDecoration(
-                              color: Colors.indigoAccent,
+                              color: Colors.green.shade300,
                             shape: BoxShape.rectangle,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(width: 2)
@@ -179,11 +169,25 @@ class HomeScreen extends StatelessWidget {
                                     children: [
                                         Text("201",style: TextStyle(fontSize: 23,color: Colors.white),),
                                       0.3.h.addHSpace(),
-                                      Text("NEW ORDER",style: TextStyle(fontSize: 16),),
-                                      Row(
-                                        children: [
-                                          
-                                        ],
+                                      Text("NEW ORDER",style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      SizedBox(
+                                        height: 2,
+                                        width: double.infinity,
+                                        child: Divider(
+                                          thickness: 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 3),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset("assets/images/increase.png",scale: 16,),
+                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                          ],
+                                        ),
                                       )
                                     ],
                                   ),
@@ -192,9 +196,160 @@ class HomeScreen extends StatelessWidget {
                               ],
                             ),
                           ),
+                        ),
+                        Container(
+                          height: 15.h,
+                          width: 47.w,
+                          decoration: BoxDecoration(
+                              color: Colors.red.shade500,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: 2)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("201",style: TextStyle(fontSize: 23,color: Colors.white),),
+                                      0.3.h.addHSpace(),
+                                      Text("Pandding",style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      SizedBox(
+                                        height: 2,
+                                        width: double.infinity,
+                                        child: Divider(
+                                          thickness: 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 3),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset("assets/images/increase.png",scale: 16,),
+                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+
+                              ],
+                            ),
+
+                          ),
                         )
                       ],
                     ),
+                    2.h.addHSpace(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 15.h,
+                          width: 47.w,
+                          decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: 2)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("201",style: TextStyle(fontSize: 23,color: Colors.white),),
+                                      0.3.h.addHSpace(),
+                                      Text("Watching",style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      SizedBox(
+                                        height: 2,
+                                        width: double.infinity,
+                                        child: Divider(
+                                          thickness: 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 3),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset("assets/images/increase.png",scale: 16,),
+                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 15.h,
+                          width: 47.w,
+                          decoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: 2)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("201",style: TextStyle(fontSize: 23,color: Colors.white),),
+                                      0.3.h.addHSpace(),
+                                      Text("Total User",style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      SizedBox(
+                                        height: 2,
+                                        width: double.infinity,
+                                        child: Divider(
+                                          thickness: 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7,vertical: 3),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset("assets/images/increase.png",scale: 16,),
+                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+
+                              ],
+                            ),
+
+                          ),
+                        )
+                      ],
+                    ),
+
+
+
                   ],
                 ),
               );

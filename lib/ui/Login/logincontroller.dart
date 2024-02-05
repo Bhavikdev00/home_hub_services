@@ -15,7 +15,7 @@ class LoginController extends GetxController {
   Rx<User?> user = Rx<User?>(null);
   String? get userId => user.value?.uid;
   RxBool isLoading = false.obs;
-  final userCheck = FirebaseFirestore.instance.collection("service_providers");
+  final userCheck = FirebaseFirestore.instance.collection("service_provider_requests");
   RxBool checkEmail = false.obs;
   // final GoogleSignIn googleSignIn = GoogleSignIn();
   @override

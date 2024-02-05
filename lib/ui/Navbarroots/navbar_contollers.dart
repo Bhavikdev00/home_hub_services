@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ui/HomeScreen/Homescreen.dart';
 import 'package:home_hub_services/ui/mesegeScreen/mesegeScreen.dart';
@@ -17,6 +18,5 @@ class NavbarController extends GetxController{
     //seting Screen
     SettingScreen(),
   ].obs;
-
 
 }

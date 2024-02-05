@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:home_hub_services/utils/extension.dart';
+import 'package:sizer/sizer.dart';
 import 'chatscreen.dart';
 
 class MessageScreen extends StatelessWidget {
-   MessageScreen({super.key});
+  MessageScreen({Key? key});
 
-  List images = [
+  List<String> images = [
     "doctor1.jpg",
     "doctor2.jpg",
     "doctor3.jpg",
@@ -13,6 +14,7 @@ class MessageScreen extends StatelessWidget {
     "doctor1.jpg",
     "doctor2.jpg",
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,9 +22,7 @@ class MessageScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 40,
-            ),
+            SizedBox(height: 40),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -30,9 +30,7 @@ class MessageScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: Container(
@@ -48,7 +46,7 @@ class MessageScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      width: 200,
+                      width: MediaQuery.of(context).size.width * 0.6,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: TextFormField(
@@ -65,16 +63,13 @@ class MessageScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Active Client",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                ),),
+              child: Text(
+                "Active Client",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
             SizedBox(
               height: 90,
@@ -142,46 +137,47 @@ class MessageScreen extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text("Client Chart",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                ),),
+              child: Text(
+                "Client Chart",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
-            // SizedBox(
-            //   height: 10
-            // ),
-            SizedBox(
-              // height: MediaQuery.of(context).size.height,
-              child: ListView.builder(
+            8.8.addHSpace(),
+            Container(
+              child: ListView.separated(
+                padding: EdgeInsets.zero, // Add this line to remove top padding
+                separatorBuilder: (context, index) {
+                  return Container(
+                    height: 1.h,
+                  );
+                },
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: images.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                  return Container(
                     child: ListTile(
-                      minVerticalPadding: 20,
                       onTap: () {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(),));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChatScreen()),
+                        );
                       },
                       leading: CircleAvatar(
                         radius: 30,
                         backgroundImage:
                         AssetImage("assets/images/${images[index]}"),
                       ),
-                      title: const Text(
+                      title: Text(
                         "Dr. Doctor Name",
                         style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        "Hello , Doctor are Your there?",
+                        "Hello, Doctor are you there?",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 16, color: Colors.black),
@@ -194,7 +190,8 @@ class MessageScreen extends StatelessWidget {
                   );
                 },
               ),
-            )
+            ),
+
           ],
         ),
       ),

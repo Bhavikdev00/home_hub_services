@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/GDPDATA.dart';
 
@@ -39,7 +37,7 @@ class HomeScreenController extends GetxController{
         _setDisplayName(user);
         QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
                 .instance
-                .collection('service_providers')
+                .collection('service_provider_requests')
                 .where('Uid', isEqualTo: uid)
                 .limit(1)
                 .get();
