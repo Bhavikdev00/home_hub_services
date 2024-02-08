@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:home_hub_services/drawerscreens/addservices/Addservices.dart';
 import 'package:home_hub_services/ui/Forgetpassword/otpvarify.dart';
 import 'package:home_hub_services/ui/HomeScreen/Homescreen.dart';
 import 'package:home_hub_services/ui/Login/LoginScreen.dart';
@@ -23,6 +24,7 @@ class Routes{
   static String navbarRoots = '/navbarRoots';
   static String otpInForgetPassword = '/forgetOtp';
   static String password = '/Password';
+  static String addServices = '/addServices';
   static final getPages = [
     GetPage(name: splashScreen, page: () => SplashScreen()),
     GetPage(name: loginScreen, page: () => Login(),),
@@ -33,6 +35,7 @@ class Routes{
     GetPage(name: homeScreen, page: () => HomeScreen(),),
     GetPage(name: otpInForgetPassword, page:() => OtpVarify()),
     GetPage(name: password, page: () => ResetPassword(),),
-    GetPage(name: navbarRoots, page: () => NavBarRoot(),)
+    GetPage(name: navbarRoots, page: () => NavBarRoot(),),
+    GetPage(name: addServices, page: () => AddServices()),
   ];
 }

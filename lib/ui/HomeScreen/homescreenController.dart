@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/GDPDATA.dart';
 
+import '../../ModelClasses/ScreenData.dart';
 import '../../ModelClasses/servicesProvider.dart';
 import 'authservices.dart';
 
@@ -14,7 +15,6 @@ class HomeScreenController extends GetxController{
     super.onInit();
     _loadUserData();
   }
-
   Rx<User?> user = Rx<User?>(null);
   RxString displayName = ''.obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -75,8 +75,5 @@ class HomeScreenController extends GetxController{
     return chatData;
 
   }
-
-
-
 
 }

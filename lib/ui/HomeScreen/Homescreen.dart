@@ -1,13 +1,21 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
+
 import 'package:home_hub_services/ui/HomeScreen/chart_container.dart';
 import 'package:home_hub_services/ui/HomeScreen/homescreenController.dart';
+import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:sizer/sizer.dart';
+
+import '../../drawerscreens/addservices/Addservices.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -19,9 +27,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
+      drawer:  Drawer(
         child: Column(
-          children: [
+          children: <Widget>[
             DrawerHeader(
               child: Obx(
                     () {
@@ -39,15 +47,50 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
             ),
-            ListTile(
-              onTap: () {},
-              title: "Add Services".mediumReadex(fontColor: Colors.black),
-              leading: Icon(Icons.design_services),
-              trailing: Icon(Icons.navigate_next),
+            ExpansionTile(
+              leading: Icon(Icons.category),
+              title: Text('Services Management'),
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: ListTile(
+                    trailing: Icon(Icons.design_services),
+                    title: const Text('Add Services'),
+                    onTap: () {
+                      Get.to(AddServices());
+                      // Handle category 1 tap
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: ListTile(
+                    trailing: Icon(Icons.delete),
+                    title:const  Text('Delete Services'),
+                    onTap: () {
+                      // Handle category 1 tap
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: ListTile(
+                    trailing: Icon(Icons.update),
+                    title:const  Text('Update Services'),
+                    onTap: () {
+                      // Handle category 1 tap
+                    },
+                  ),
+                ),
+                // Add more list tiles for other categories
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Divider(),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Exit app'),
+              onTap: () {
+                exitApp();
+              },
             ),
           ],
         ),
@@ -78,20 +121,19 @@ class HomeScreen extends StatelessWidget {
                           height: 55,
                           width: 55,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: NetworkImage(controller.userData.value.Images),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                           child: GestureDetector(
                             onTap: () {
                               _scaffoldKey.currentState?.openDrawer();
                             },
-                            child: CachedNetworkImage(
-                              imageUrl: controller.userData.value.Images,
-                              placeholder: (context, url) {
-                                return LoadingAnimationWidget.hexagonDots(color: appColor, size: 2.h);
-                              },
-                            ),
                           ),
                         ),
+
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -151,7 +193,6 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          height: 15.h,
                           width: 47.w,
                           decoration: BoxDecoration(
                               color: Colors.green.shade300,
@@ -185,20 +226,19 @@ class HomeScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Image.asset("assets/images/increase.png",scale: 16,),
-                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                            Text("Increase 20%",style: TextStyle(fontSize: 17),)
                                           ],
                                         ),
                                       )
                                     ],
                                   ),
                                 ),
-                                
+
                               ],
                             ),
                           ),
                         ),
                         Container(
-                          height: 15.h,
                           width: 47.w,
                           decoration: BoxDecoration(
                               color: Colors.red.shade500,
@@ -232,7 +272,7 @@ class HomeScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Image.asset("assets/images/increase.png",scale: 16,),
-                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                            Text("Increase 20%",style: TextStyle(fontSize: 17),)
                                           ],
                                         ),
                                       )
@@ -252,7 +292,6 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          height: 15.h,
                           width: 47.w,
                           decoration: BoxDecoration(
                               color: Colors.yellow,
@@ -285,7 +324,7 @@ class HomeScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Image.asset("assets/images/increase.png",scale: 16,),
-                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                            Text("Increase 20%",style: TextStyle(fontSize: 17),)
                                           ],
                                         ),
                                       )
@@ -298,7 +337,6 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          height: 15.h,
                           width: 47.w,
                           decoration: BoxDecoration(
                               color: Colors.blue,
@@ -332,7 +370,7 @@ class HomeScreen extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Image.asset("assets/images/increase.png",scale: 16,),
-                                            Text("Increase 20%",style: TextStyle(fontSize: 20),)
+                                            Text("Increase 20%",style: TextStyle(fontSize: 17),)
                                           ],
                                         ),
                                       )
@@ -347,7 +385,44 @@ class HomeScreen extends StatelessWidget {
                         )
                       ],
                     ),
-
+                    1.h.addHSpace(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        "Services".mediumReadex(
+                            fontSize: 20, fontColor: Colors.black),
+                        Icon(Icons.more_vert, color: Colors.black)
+                      ],
+                    ),
+                    1.h.addHSpace(),
+                    CarouselSlider(
+                      options: CarouselOptions(height: 22.h, autoPlay: true),
+                      items: [1, 2, 3, 4, 5].map((i) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                height: 150,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/images/tree-736885_1280.jpg"),
+                                    fit: BoxFit
+                                        .fill, // Change BoxFit.cover to BoxFit.fill
+                                  ),
+                                  border:
+                                  Border.all(color: Colors.black38, width: 2),
+                                ),
+                              ).paddingSymmetric(horizontal: 10),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    2.h.addHSpace(),
 
 
                   ],
@@ -357,6 +432,45 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void exitApp() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      exit(0); // Exit app on mobile platforms
+    } else {
+      // Handle other platforms if needed
+    }
+  }
+}
+
+class ExtensionListTile extends StatelessWidget {
+  final Widget leading;
+  final Widget title;
+  final Widget? subtitle;
+  final Widget? trailing;
+  final EdgeInsetsGeometry? contentPadding;
+  final VoidCallback? onTap;
+
+  const ExtensionListTile({
+    Key? key,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.contentPadding,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: leading,
+      title: title,
+      subtitle: subtitle,
+      trailing: trailing,
+      contentPadding: contentPadding,
+      onTap: onTap,
     );
   }
 }
