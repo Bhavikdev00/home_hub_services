@@ -277,8 +277,10 @@ class RegisterDetailsController extends GetxController{
         }
       }
     }catch (e) {
+      loadAddData(false);
       print('Error checking OTP: $e');
     }
+    loadAddData(false);
     return false;
   }
 

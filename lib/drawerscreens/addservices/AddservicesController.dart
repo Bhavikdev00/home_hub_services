@@ -121,13 +121,8 @@ class AddServicesController extends GetxController{
       IsLoadding.value = true;
       List<String> images = await _uploadImagesToStorage();
       List<String> PosteImages = await _uploadImages1ToStorage();
-      if (images.isNotEmpty) {
-        if(images.isNotEmpty){
-          await _updateDatabase(images,PosteImages);
-          clearingData();
-        }
-
-      }
+      await _updateDatabase(images,PosteImages);
+      clearingData();
       return true;
 
     }catch(e){
@@ -157,7 +152,7 @@ class AddServicesController extends GetxController{
     FirebaseStorage storage = FirebaseStorage.instance;
     List<String> downloadUrls = [];
 
-    for (var imageFile in _PosterImages) {
+    for (var imageFile in _images) {
       String extentions = extension(imageFile.path);
       String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
       Reference ref = storage.ref().child('PosterImages').child(fileName);

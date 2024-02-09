@@ -17,13 +17,14 @@ class LoginController extends GetxController {
   final userCheck = FirebaseFirestore.instance.collection("service_providers");
   RxBool checkEmail = false.obs;
   // final GoogleSignIn googleSignIn = GoogleSignIn();
+
   @override
-  void onClose() {
+  void dispose() {
+    // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
-    super.onClose();
+    super.dispose();
   }
-
   @override
   void onInit() {
     super.onInit();

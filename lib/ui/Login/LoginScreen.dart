@@ -11,12 +11,24 @@ import '../../constraint/app_assets.dart';
 import '../../constraint/app_color.dart';
 import 'logincontroller.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   Login({super.key});
 
-  final _globel = GlobalKey<FormState>();
-  final LoginController _controller = Get.put(LoginController());
+  @override
+  State<Login> createState() => _LoginState();
+}
 
+class _LoginState extends State<Login> {
+  final _globel = GlobalKey<FormState>();
+
+  final LoginController _controller = Get.put(LoginController());
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.emailController.dispose();
+    _controller.passwordController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
