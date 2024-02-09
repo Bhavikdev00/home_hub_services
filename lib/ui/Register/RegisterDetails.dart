@@ -249,6 +249,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                         ),
                       ),
+                      2.h.addHSpace(),
                       Obx(
                         () => _registerDetailsController.selectedServices == null
                             ? Container()

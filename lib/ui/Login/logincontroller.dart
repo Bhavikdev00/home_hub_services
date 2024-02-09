@@ -6,7 +6,6 @@ import 'package:home_hub_services/constraint/app_color.dart';
 
 import '../../getstorage/StorageClass.dart';
 
-
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -15,7 +14,7 @@ class LoginController extends GetxController {
   Rx<User?> user = Rx<User?>(null);
   String? get userId => user.value?.uid;
   RxBool isLoading = false.obs;
-  final userCheck = FirebaseFirestore.instance.collection("service_provider_requests");
+  final userCheck = FirebaseFirestore.instance.collection("service_providers");
   RxBool checkEmail = false.obs;
   // final GoogleSignIn googleSignIn = GoogleSignIn();
   @override

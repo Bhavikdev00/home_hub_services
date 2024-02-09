@@ -21,11 +21,16 @@ class RegisterController extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
+
     super.onClose();
   }
-
+@override
+  void dispose() {
+  emailController.dispose();
+  passwordController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   void onInit() {
     super.onInit();

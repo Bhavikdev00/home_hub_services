@@ -1,10 +1,8 @@
-
+import 'package:path/path.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -12,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../ModelClasses/ScreenData.dart';
 
 class AddServicesController extends GetxController{
   final serviceName = TextEditingController();
@@ -22,9 +19,11 @@ class AddServicesController extends GetxController{
   var selectedServices = Rx<String?>(null);
   RxBool showContent = false.obs;
   RxBool IsLoadding = false.obs;
-  final RxList<File> _pickedImages = <File>[].obs;
+  final RxList<File> _PosterImages = <File>[].obs;
 
-  List<File> get pickedImages => _pickedImages;
+  List<File> get pickedImages => _PosterImages;
+  final RxList<File> _images = <File>[].obs;
+  List<File> get imagesPick => _images;
   @override
   void onInit() {
     // TODO: implement onInit
@@ -37,17 +36,34 @@ class AddServicesController extends GetxController{
     selectedServices.value = service;
   }
   RxList<String> selectServices = <String>[].obs;
+  String? names;
+  String? Did;
+  String? Contectnumber;
+  String? address;
   Future<void> loadCategoryList() async {
     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection("servicesInfo").get();
+    QuerySnapshot<Map<String, dynamic>> userProviderData = await FirebaseFirestore.instance.collection("service_provider_requests").where("Uid",isEqualTo: userid.value).limit(1).get();
 
     print(snapshot.docs.length);
     try {
+
+      if(userProviderData.docs.isNotEmpty){
+        Map<String, dynamic> userData = userProviderData.docs.first.data();
+        String name = userData['fname'] +  " "+ userData['lname'];
+        String did = userData['Did'];
+        String number = userData['contact'];
+        String addresses = userData["address"];
+        names = name;
+        Did = did;
+        Contectnumber = number;
+        address = addresses;
+      }
+      //
       for (QueryDocumentSnapshot<Map<String, dynamic>> document
       in snapshot.docs) {
         // Change "fieldName" to the actual field name you want to extract
         String fieldValue = document['ServicesName'];
 
-        // Add the field value to the list
         if (fieldValue != null) {
           selectServices.add(fieldValue);
         }
@@ -76,14 +92,24 @@ class AddServicesController extends GetxController{
     update();
   }
 
+  Future<void> pickPosterImages() async {
+    List<XFile>? pickedImages =
+    await ImagePicker().pickMultiImage(imageQuality: 50);
+
+    if (pickedImages != null) {
+      _PosterImages.addAll(pickedImages.map((image) => File(image.path)));
+    }
+  }
+
   Future<void> pickImages() async {
     List<XFile>? pickedImages =
     await ImagePicker().pickMultiImage(imageQuality: 50);
 
     if (pickedImages != null) {
-      _pickedImages.addAll(pickedImages.map((image) => File(image.path)));
+      _images.addAll(pickedImages.map((image) => File(image.path)));
     }
   }
+
   void Dispose(){
     serviceName.clear();
     imageFile.value = null;
@@ -93,13 +119,17 @@ class AddServicesController extends GetxController{
   Future<bool> uploadImagesToFirebase() async {
     try{
       IsLoadding.value = true;
-      List<String> downloadUrls = await _uploadImagesToStorage();
-      if (downloadUrls.isNotEmpty) {
-        await _updateDatabase(downloadUrls);
-        clearingData();
+      List<String> images = await _uploadImagesToStorage();
+      List<String> PosteImages = await _uploadImages1ToStorage();
+      if (images.isNotEmpty) {
+        if(images.isNotEmpty){
+          await _updateDatabase(images,PosteImages);
+          clearingData();
+        }
+
       }
       return true;
-      IsLoadding.value = false;
+
     }catch(e){
       return false;
       print(e.toString());
@@ -111,20 +141,34 @@ class AddServicesController extends GetxController{
     FirebaseStorage storage = FirebaseStorage.instance;
     List<String> downloadUrls = [];
 
-    for (var imageFile in _pickedImages) {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference ref = storage.ref().child('images').child(fileName);
-
+    for (var imageFile in _PosterImages) {
+      String extentions = extension(imageFile.path);
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
+      Reference ref = storage.ref().child('Images').child(fileName);
       // Upload image to Firebase Storage
       await ref.putFile(imageFile);
-
       // Get download URL for the uploaded image
       String downloadUrl = await ref.getDownloadURL();
       downloadUrls.add(downloadUrl);
     }
     return downloadUrls;
   }
+  Future<List<String>> _uploadImages1ToStorage() async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    List<String> downloadUrls = [];
 
+    for (var imageFile in _PosterImages) {
+      String extentions = extension(imageFile.path);
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
+      Reference ref = storage.ref().child('PosterImages').child(fileName);
+      // Upload image to Firebase Storage
+      await ref.putFile(imageFile);
+      // Get download URL for the uploaded image
+      String downloadUrl = await ref.getDownloadURL();
+      downloadUrls.add(downloadUrl);
+    }
+    return downloadUrls;
+  }
   void getCurrentUser() {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user = auth.currentUser;
@@ -138,14 +182,14 @@ class AddServicesController extends GetxController{
     }
   }
 
-  _updateDatabase(List<String> downloadUrls) async {
+  _updateDatabase(List<String> images, List<String> postedImages) async {
     String userId = userid.value;
     CollectionReference servicesDataProvider = FirebaseFirestore.instance
         .collection('Services-Provider(Provider)');
     var now = DateTime.now();
     var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
     String time = formatter.format(now);
-    Services services = Services(servicesName: serviceName.text.toString(), CategoryName: selectedServices.value.toString(), CategoryDescription: description.text.toString(), CreatedAt: time, Images: downloadUrls, uid: userId);
+    Services services = Services(servicesName: serviceName.text.toString(), CategoryName: selectedServices.value.toString(), CategoryDescription: description.text.toString(), CreatedAt: time, Images: images, uid: userId,address: address!,contactNumber:Contectnumber!,did: Did!,UserName: names!,postedImages: postedImages);
     await servicesDataProvider.add(services.toMap());
   }
 
@@ -153,7 +197,7 @@ class AddServicesController extends GetxController{
     imageFile.value = null;
     selectedServices.value = null;
     description.clear();
-    _pickedImages.clear();
+    _PosterImages.clear();
     showContent.value = false;
     serviceName.clear();
   }

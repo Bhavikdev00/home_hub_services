@@ -259,6 +259,8 @@ class RegisterDetailsController extends GetxController{
         String otp =  otpValues.map((otpValue) => otpValue.value).join();
         if (otp == storedOTP && timeDifference <= 200) {
              await AddData(email,password);
+             _storageService.RegisterStatusCheck(true);
+             _storageService.loginStatusCheck(false);
            loadAddData(false);
           return true; // OTP matches and within the time limit
         }

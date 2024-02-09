@@ -25,6 +25,15 @@ class StorageService{
   dynamic getLoginStatus() {
     return _storage.read(loginStatus) ?? false;
   }
+
+  RegisterStatusCheck(bool value) async {
+    await _storage.write(registerStatus, value);
+  }
+
+  dynamic getRegisterStatus() {
+    return _storage.read(registerStatus) ?? false;
+  }
+
   Future<void> removeDAta() async {
     await _storage.erase();
   }

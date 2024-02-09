@@ -4,17 +4,20 @@ import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/GDPDATA.dart';
 
 import '../../ModelClasses/ScreenData.dart';
+import '../../ModelClasses/services.dart';
 import '../../ModelClasses/servicesProvider.dart';
+import '../../getstorage/StorageClass.dart';
 import 'authservices.dart';
 
 class HomeScreenController extends GetxController{
-
+  final StorageService _storageService = StorageService();
   final AuthService _authService = Get.put(AuthService());
   @override
   void onInit() {
     super.onInit();
     _loadUserData();
   }
+  RxList<ServicesData> serviceData = <ServicesData>[].obs;
   Rx<User?> user = Rx<User?>(null);
   RxString displayName = ''.obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -28,6 +31,7 @@ class HomeScreenController extends GetxController{
     print(user!.displayName);
   }
   void _loadUserData() {
+    _storageService.RegisterStatusCheck(false);
     isLoading.value = true;
     // Listen to changes in the authentication state
     ever(_authService.user, (User? user) async {
@@ -41,6 +45,7 @@ class HomeScreenController extends GetxController{
                 .where('Uid', isEqualTo: uid)
                 .limit(1)
                 .get();
+
         if (querySnapshot.docs.isNotEmpty) {
                 userData!.value = ServicesData.formMap(querySnapshot.docs.first.data());
                 LoadImages.value = false;
@@ -59,6 +64,7 @@ class HomeScreenController extends GetxController{
         print("User is Null");
       }
     });
+    update();
   }
 
 
@@ -75,5 +81,6 @@ class HomeScreenController extends GetxController{
     return chatData;
 
   }
+
 
 }

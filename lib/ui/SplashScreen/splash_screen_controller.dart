@@ -25,11 +25,12 @@ class SplashScreenController extends GetxController {
   void _navigate() {
     Future.delayed(const Duration(seconds: 3)).then(
       (value) async {
-        if(_authService.currentUser != null){
+        if(_storageService.getLoginStatus()){
           Get.offAllNamed(Routes.navbarRoots);
-        }else {
-          // User is not logged in, navigate to the login screen
-          Get.offAllNamed(Routes.navbarRoots);
+        }else if(_storageService.getRegisterStatus()){
+          Get.offAllNamed(Routes.loginScreen);
+        }else{
+          Get.offAllNamed(Routes.loginScreen);
         }
        },
      );

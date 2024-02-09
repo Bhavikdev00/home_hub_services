@@ -55,6 +55,8 @@ class AddServices extends StatelessWidget {
                   ),
                 ),
                 2.h.addHSpace(),
+                Text("Select to Poster Images",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500)),
+                1.h.addHSpace(),
                 Container(
                   height: 150,
                   padding: EdgeInsets.all(8.0),
@@ -112,7 +114,7 @@ class AddServices extends StatelessWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                _controller.pickImages();
+                                _controller.pickPosterImages();
                               },
                               child: Icon(Icons.add),
                             ),
@@ -128,6 +130,81 @@ class AddServices extends StatelessWidget {
                   ),
                 ),
                 2.h.addHSpace(),
+                Text("Select to Images",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500)),
+                1.h.addHSpace(),
+                Container(
+                  height: 150,
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 3,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Obx(
+                              () =>  _controller.imagesPick.length == 0 ? Container(
+                            child: Center(child: const Text("No Image Selected")),
+                          ) :Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                            child:  GridView.builder(
+                              shrinkWrap: true,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8.0,
+                                mainAxisSpacing: 8.0,
+                              ),
+                              itemCount: _controller.imagesPick.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Image.file(
+                                  File(_controller.imagesPick[index].path),
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                 _controller.pickImages();
+                              },
+                              child: Icon(Icons.add),
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              'Add Image',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                1.5.h.addHSpace(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
