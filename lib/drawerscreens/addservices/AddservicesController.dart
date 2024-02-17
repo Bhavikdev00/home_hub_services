@@ -1,3 +1,5 @@
+
+import 'package:home_hub_services/ModelClasses/service.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
@@ -11,19 +13,22 @@ import 'package:home_hub_services/ModelClasses/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class AddServicesController extends GetxController{
+class AddServicesController extends GetxController {
   final serviceName = TextEditingController();
   final description = TextEditingController();
+  final price = TextEditingController();
   RxString userid = RxString('');
   Rx<File?> imageFile = Rx<File?>(null);
-  var selectedServices = Rx<String?>(null);
+  var categoryServices = Rx<String?>(null);
   RxBool showContent = false.obs;
   RxBool IsLoadding = false.obs;
   final RxList<File> _PosterImages = <File>[].obs;
 
   List<File> get pickedImages => _PosterImages;
   final RxList<File> _images = <File>[].obs;
+
   List<File> get imagesPick => _images;
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -33,23 +38,27 @@ class AddServicesController extends GetxController{
   }
 
   void setSelectedService(String? service) {
-    selectedServices.value = service;
+    categoryServices.value = service;
+    update();
   }
+
   RxList<String> selectServices = <String>[].obs;
   String? names;
   String? Did;
   String? Contectnumber;
   String? address;
+
   Future<void> loadCategoryList() async {
-    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection("servicesInfo").get();
-    QuerySnapshot<Map<String, dynamic>> userProviderData = await FirebaseFirestore.instance.collection("service_provider_requests").where("Uid",isEqualTo: userid.value).limit(1).get();
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance.collection("servicesInfo").get();
+    QuerySnapshot<Map<String, dynamic>> userProviderData = await FirebaseFirestore
+        .instance.collection("service_provider_requests").where(
+        "Uid", isEqualTo: userid.value).limit(1).get();
 
-    print(snapshot.docs.length);
     try {
-
-      if(userProviderData.docs.isNotEmpty){
+      if (userProviderData.docs.isNotEmpty) {
         Map<String, dynamic> userData = userProviderData.docs.first.data();
-        String name = userData['fname'] +  " "+ userData['lname'];
+        String name = userData['fname'] + " " + userData['lname'];
         String did = userData['Did'];
         String number = userData['contact'];
         String addresses = userData["address"];
@@ -68,12 +77,12 @@ class AddServicesController extends GetxController{
           selectServices.add(fieldValue);
         }
       }
-
     } catch (e) {
       print('Error loading category list: $e');
       // Handle the error if necessary
     }
   }
+
   Future<void> pickImage() async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -82,7 +91,8 @@ class AddServicesController extends GetxController{
       imageFile.value = File(pickedFile.path);
     }
   }
-  void remove(){
+
+  void remove() {
     imageFile.value = null;
     update();
   }
@@ -110,35 +120,36 @@ class AddServicesController extends GetxController{
     }
   }
 
-  void Dispose(){
+  void Dispose() {
     serviceName.clear();
     imageFile.value = null;
   }
 
 
-  Future<bool> uploadImagesToFirebase() async {
-    try{
+  Future<bool> uploadDataInFirebase() async {
+    try {
       IsLoadding.value = true;
       List<String> images = await _uploadImagesToStorage();
-      List<String> PosteImages = await _uploadImages1ToStorage();
-      await _updateDatabase(images,PosteImages);
+      await _updateDatabase(images);
       clearingData();
       return true;
-
-    }catch(e){
+    } catch (e) {
       return false;
-      print(e.toString());
-    }finally{
+    } finally {
       IsLoadding.value = false;
     }
   }
+
   Future<List<String>> _uploadImagesToStorage() async {
     FirebaseStorage storage = FirebaseStorage.instance;
     List<String> downloadUrls = [];
 
     for (var imageFile in _PosterImages) {
       String extentions = extension(imageFile.path);
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
+      String fileName = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString() + extentions;
       Reference ref = storage.ref().child('Images').child(fileName);
       // Upload image to Firebase Storage
       await ref.putFile(imageFile);
@@ -148,49 +159,64 @@ class AddServicesController extends GetxController{
     }
     return downloadUrls;
   }
-  Future<List<String>> _uploadImages1ToStorage() async {
-    FirebaseStorage storage = FirebaseStorage.instance;
-    List<String> downloadUrls = [];
 
-    for (var imageFile in _images) {
-      String extentions = extension(imageFile.path);
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
-      Reference ref = storage.ref().child('PosterImages').child(fileName);
-      // Upload image to Firebase Storage
-      await ref.putFile(imageFile);
-      // Get download URL for the uploaded image
-      String downloadUrl = await ref.getDownloadURL();
-      downloadUrls.add(downloadUrl);
-    }
-    return downloadUrls;
-  }
   void getCurrentUser() {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user = auth.currentUser;
 
     if (user != null) {
-       userid.value  = user.uid;
-       print(userid.value);
+      userid.value = user.uid;
     } else {
       // User is not logged in
       print("Error ");
     }
   }
 
-  _updateDatabase(List<String> images, List<String> postedImages) async {
+  _updateDatabase(List<String> images) async {
     String userId = userid.value;
-    CollectionReference servicesDataProvider = FirebaseFirestore.instance
-        .collection('Services-Provider(Provider)');
+    final servicesDataProvider = FirebaseFirestore.instance.collection('Services-Provider(Provider)').doc(userId);
     var now = DateTime.now();
     var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
     String time = formatter.format(now);
-    Services services = Services(servicesName: serviceName.text.toString(), CategoryName: selectedServices.value.toString(), CategoryDescription: description.text.toString(), CreatedAt: time, Images: images, uid: userId,address: address!,contactNumber:Contectnumber!,did: Did!,UserName: names!,postedImages: postedImages);
-    await servicesDataProvider.add(services.toMap());
-  }
+    Service service = Service(CategoryName: serviceName.text.toString(),service_id: "", images: images, address: address!, price: int.parse(price.text.toString()), name: serviceName.text.toString(), description: description.text.toString());
 
+    Services services = Services(servicesName: serviceName.text.toString(),
+        CreatedAt: time,
+        categoryName: service,
+        uid: userId,
+        contactNumber: Contectnumber!,
+        did: Did!,
+        UserName: names!);
+    await servicesDataProvider.set({
+      'name': names,
+      'address': services.categoryName!.address,
+      'createdAt' : services.CreatedAt
+    });
+    DocumentReference documentReference =
+    await servicesDataProvider.collection('services').add({
+      'servicesName' : service.CategoryName,
+      'CategoryName': categoryServices.value,
+      'address': services.categoryName!.address,
+      'price' : services.categoryName!.price,
+      'images' : services.categoryName!.images,
+    });
+    String documentId = documentReference.id;
+    await servicesDataProvider.collection('services').doc(documentId).update({
+      'service_id: ': documentId,
+    });
+    DocumentReference documentReference1 = await servicesDataProvider.collection('ratings').add({
+      'average_rating': 4.5,
+      'total_ratings': 10,
+    });
+    String documentId1 = documentReference1.id;
+    await servicesDataProvider.collection('ratings').doc(documentId1).update({
+      'rating_id: ': documentId1,
+    });
+
+  }
   void clearingData() {
     imageFile.value = null;
-    selectedServices.value = null;
+    categoryServices.value = null;
     description.clear();
     _PosterImages.clear();
     showContent.value = false;

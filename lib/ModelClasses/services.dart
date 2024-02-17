@@ -1,56 +1,47 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Services{
+
+import 'package:home_hub_services/ModelClasses/service.dart';
+
+class Services {
   String servicesName;
-  String CategoryName;
-  String CategoryDescription;
   String CreatedAt;
-  List<String> Images;
-  List<String> postedImages;
   String uid;
   String UserName;
-  String address;
+  Service? categoryName;
   String did;
   String contactNumber;
-  Services(
-      {required this.servicesName,
-        required this.address,
-        required this.did,
-        required this.UserName,
-        required this.contactNumber,
-      required this.CategoryName,
-      required this.CategoryDescription,
-      required this.CreatedAt,
-        required this.postedImages,
-      required this.Images,
-      required this.uid});
+
+  Services({required this.servicesName,
+    required this.did,
+    this.categoryName,
+    required this.UserName,
+    required this.contactNumber,
+    required this.CreatedAt,
+    required this.uid});
 
   Map<String, dynamic> toMap() {
     return {
       "servicesName": this.servicesName,
-      "CategoryName": this.CategoryName,
-      "CategoryDescription": this.CategoryDescription,
+
       "CreatedAt": this.CreatedAt,
-      "Images": this.Images,
+      "services" : this.categoryName,
       "uid": this.uid,
-      "address" : this.address,
-      "number" : this.contactNumber,
-      "userName" : this.UserName,
-      "did" : this.did,
-      "postedImages" : this.postedImages
+      "number": this.contactNumber,
+      "userName": this.UserName,
+      "did": this.did,
     };
   }
 
-  // factory Services.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-  //   Map<String, dynamic> data = snapshot.data()!;
-  //   return Services(
-  //     servicesName: data['servicesName'] ?? '',
-  //     CategoryName: data['CategoryName'] ?? '',
-  //     CategoryDescription: data['CategoryDescription'] ?? '',
-  //     CreatedAt: data['CreatedAt'],
-  //     Images: List<String>.from(data['Images']),
-  //     uid: data['uid'] ?? '',
-  //   );
-  // }
-//
+  factory Services.fromJson(Map<String, dynamic> json) {
+    return Services(
+      categoryName: json['service'] != null ? Service.fromMap(json['service']) : null,
+      servicesName: json['servicesName'] ?? "",
+      CreatedAt: json['CreatedAt'] ?? "",
+      uid: json['uid'] ?? "",
+      contactNumber: json['number'] ?? "",
+      UserName: json['userName'] ?? "",
+      did: json['did'] ?? "",
+    );
+  }
+
 }

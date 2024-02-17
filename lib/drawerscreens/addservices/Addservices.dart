@@ -29,207 +29,152 @@ class AddServices extends StatelessWidget {
         child: Form(
           key: _SecondKey,
           child: Obx(
-            () => _controller.IsLoadding.value ?  LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h) : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Service Description",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                TextFormField(
-                  controller: _controller.description,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 3,
-                  validator: (value) {
-                    if(value == null || value.isEmpty){
-                      return "Enter the Description";
-                    }else{
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    labelText: "Description Of Services",
-
-                    alignLabelWithHint: true,
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  ),
-                ),
-                2.h.addHSpace(),
-                Text("Select to Poster Images",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500)),
-                1.h.addHSpace(),
-                Container(
-                  height: 150,
-                  padding: EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Obx(
-                              () =>  _controller.pickedImages.length == 0 ? Container(
-                            child: Center(child: const Text("No Image Selected")),
-                          ) :Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                            ),
-                            child:  GridView.builder(
-                              shrinkWrap: true,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 8.0,
-                                mainAxisSpacing: 8.0,
-                              ),
-                              itemCount: _controller.pickedImages.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Image.file(
-                                  File(_controller.pickedImages[index].path),
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.0),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _controller.pickPosterImages();
-                              },
-                              child: Icon(Icons.add),
-                            ),
-                            SizedBox(height: 8.0),
-                            Text(
-                              'Add Image',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                2.h.addHSpace(),
-                Text("Select to Images",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500)),
-                1.h.addHSpace(),
-                Container(
-                  height: 150,
-                  padding: EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Obx(
-                              () =>  _controller.imagesPick.length == 0 ? Container(
-                            child: Center(child: const Text("No Image Selected")),
-                          ) :Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                            ),
-                            child:  GridView.builder(
-                              shrinkWrap: true,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 8.0,
-                                mainAxisSpacing: 8.0,
-                              ),
-                              itemCount: _controller.imagesPick.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Image.file(
-                                  File(_controller.imagesPick[index].path),
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.0),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                 _controller.pickImages();
-                              },
-                              child: Icon(Icons.add),
-                            ),
-                            SizedBox(height: 8.0),
-                            Text(
-                              'Add Image',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                1.5.h.addHSpace(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: appButton(onTap: (){
-                      _controller.toggleContent();
-                    },
-                        text: "Back",
-                        color: Colors.grey,fontColor: Colors.black)),
-                    2.w.addWSpace(),
-                    Expanded(child: appButton(onTap: () async {
-                      if(_SecondKey.currentState!.validate()){
-                       var check =  await  _controller.uploadImagesToFirebase();
-                       if(check){
-                         Get.back();
-                       }else{
-                         print("Error");
-                       }
+            () => _controller.IsLoadding.value ?  LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h) : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Service Description",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                  TextFormField(
+                    controller: _controller.description,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 3,
+                    validator: (value) {
+                      if(value == null || value.isEmpty){
+                        return "Enter the Description";
+                      }else{
+                        return null;
                       }
                     },
-                      text: "Add Services",
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      labelText: "Description Of Services",
+              
+                      alignLabelWithHint: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
                     ),
+                  ),
+                  2.h.addHSpace(),
+                  Text("Select Images",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500)),
+                  1.h.addHSpace(),
+                  Container(
+                    height: 150,
+                    padding: EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Obx(
+                                () =>  _controller.pickedImages.length == 0 ? Container(
+                              child: Center(child: const Text("No Image Selected")),
+                            ) :Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                              child:  GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 8.0,
+                                  mainAxisSpacing: 8.0,
+                                ),
+                                itemCount: _controller.pickedImages.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Image.file(
+                                    File(_controller.pickedImages[index].path),
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  _controller.pickPosterImages();
+                                },
+                                child: Icon(Icons.add),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                'Add Image',
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  1.5.h.addHSpace(),
+                  const Text("Price Of Services",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                  1.5.h.addHSpace(),
+                  TextFormField(
+                    validator: (value) {
+                      if(value == null || value.isEmpty){
+                        return "Enter the Price";
+                      }else{
+                        return null;
+                      }
+                    },
+                    keyboardType: TextInputType.number,
+                    controller: _controller.price,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                      )
+                    ),
+                  ),
+                  2.h.addHSpace(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: appButton(onTap: (){
+                        _controller.toggleContent();
+                      },
+                          text: "Back",
+                          color: Colors.grey,fontColor: Colors.black)),
+                      2.w.addWSpace(),
+                      Expanded(child: appButton(onTap: () async {
+                        if(_SecondKey.currentState!.validate()){
+                         var check =  await  _controller.uploadDataInFirebase();
+                         if(check){
+                           Get.back();
+                         }else{
+                           print("Error");
+                         }
+                        }
+                      },
+                        text: "Add Services",
+                      ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -329,7 +274,7 @@ class AddServices extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Obx(
-                    () => _controller.selectedServices == null
+                    () => _controller.categoryServices == null
                     ? Container()
                     : Container(
                   decoration: BoxDecoration(
@@ -351,16 +296,14 @@ class AddServices extends StatelessWidget {
                       return null; // Return null if validation succeeds
                     },
                     value: _controller
-                        .selectedServices.value,
+                        .categoryServices.value,
                     hint: const Text('Selected Services'),
                     onChanged: (String? newValue) {
-                      _controller
-                          .setSelectedService(newValue);
+                      _controller.setSelectedService(newValue);
                     },
                     items: _controller
                         .selectServices.value
                         .map((String service) {
-                      print(service);
                       return DropdownMenuItem<String>(
                         value: service,
                         child: Text(service),

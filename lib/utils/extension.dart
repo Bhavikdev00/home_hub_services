@@ -377,3 +377,109 @@ Widget circularImages({
     ),
   );
 }
+
+
+
+
+extension OpenSans on String {
+  Widget regularOpenSans({
+    Color? fontColor,
+    double? fontSize,
+    TextDecoration? textDecoration,
+    TextOverflow? textOverflow,
+    TextAlign? textAlign,
+  }) {
+    return Text(
+      this,
+      overflow: textOverflow,
+      style: TextStyle(
+          color: fontColor ?? appColor,
+          fontSize: fontSize ?? 16,
+          fontWeight: FontWeight.w300,
+          decoration: textDecoration ?? TextDecoration.none,
+          fontFamily: 'OpenSans'),
+      textAlign: textAlign,
+    );
+  }
+
+  Widget mediumOpenSans(
+      {Color? fontColor,
+        double? fontSize,
+        TextDecoration? textDecoration,
+        TextOverflow? textOverflow,
+        TextAlign? textAlign,
+        int? maxLine}) {
+    return Text(
+      this,
+      overflow: textOverflow,
+      style: TextStyle(
+          color: fontColor ?? appColor,
+          fontSize: fontSize ?? 16,
+          fontWeight: FontWeight.w400,
+          decoration: textDecoration ?? TextDecoration.none,
+          fontFamily: 'OpenSans'),
+      textAlign: textAlign,
+      maxLines: maxLine,
+    );
+  }
+
+  Widget semiOpenSans({
+    Color? fontColor,
+    double? fontSize,
+    TextDecoration? textDecoration,
+    TextOverflow? textOverflow,
+    TextAlign? textAlign,
+  }) {
+    return Text(
+      this,
+      overflow: textOverflow,
+      style: TextStyle(
+          color: fontColor ?? appColor,
+          fontSize: fontSize ?? 16,
+          fontWeight: FontWeight.w600,
+          decoration: textDecoration ?? TextDecoration.none,
+          fontFamily: 'OpenSans'),
+      textAlign: textAlign,
+    );
+  }
+
+  Widget boldOpenSans({
+    Color? fontColor,
+    double? fontSize,
+    TextDecoration? textDecoration,
+    TextOverflow? textOverflow,
+    TextAlign? textAlign,
+  }) {
+    return Text(
+      this,
+      overflow: textOverflow,
+      style: TextStyle(
+          color: fontColor ?? appColor,
+          fontSize: fontSize ?? 16,
+          fontWeight: FontWeight.w700,
+          decoration: textDecoration ?? TextDecoration.none,
+          fontFamily: 'OpenSans'),
+      textAlign: textAlign,
+    );
+  }
+
+  Widget extraBoldOpenSans({
+    Color? fontColor,
+    double? fontSize,
+    TextDecoration? textDecoration,
+    TextOverflow? textOverflow,
+    TextAlign? textAlign,
+  }) {
+    return Text(
+      this,
+      overflow: textOverflow,
+      style: TextStyle(
+          color: fontColor ?? appColor,
+          fontSize: fontSize ?? 16,
+          fontWeight: FontWeight.w700,
+          decoration: textDecoration ?? TextDecoration.none,
+          fontFamily: 'OpenSans'),
+      textAlign: textAlign,
+    );
+  }
+}
