@@ -11,23 +11,37 @@ class DeleteServicesController extends GetxController{
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    print("Call");
     getCurrentUser();
     loadCategory();
   }
+
+  @override
+  void dispose() {
+    // Clean up tasks such as closing streams, canceling subscriptions, etc.
+    Services.close();
+    category.close();
+    super.dispose();
+  }
+
+
   RxList<Service> services = <Service>[].obs;
 
-  var categoryServices = Rx<String?>(null);
-  var selectedCategorys = Rx<String?>(null);
+  var Services = Rx<String?>(null);
+  var category = Rx<String?>(null);
   RxString userid = RxString('');
 
   void setSelectedService(String? service) {
-    categoryServices.value = service;
+    Services.value = service;
     update();
   }
   void setSelectedCategory(String? service) {
-    selectedCategorys.value = service;
+    category.value = service;
     update();
   }
+
+
+
   RxList<String> selectServices = <String>[].obs;
   RxList<String> selectedCategory = <String>[].obs;
   void getCurrentUser() {
@@ -62,10 +76,31 @@ class DeleteServicesController extends GetxController{
     in snapshot.docs) {
       // Change "fieldName" to the actual field name you want to extract
       String fieldValue = document['ServicesName'];
-
+      print(fieldValue);
       if (fieldValue != null) {
         selectServices.add(fieldValue);
       }
     }
+    update();
   }
+
+  Future<bool> deletedData() async {
+  try{
+    CollectionReference parentCollectionRef = FirebaseFirestore.instance.collection('Services-Provider(Provider)');
+    DocumentReference parentDocRef = parentCollectionRef.doc(userid.value);
+    CollectionReference nestedCollectionRef = parentDocRef.collection('services');
+    QuerySnapshot nestedCollectionSnapshot = await nestedCollectionRef.where("CategoryName",isEqualTo: Services.value).where("servicesName",isEqualTo:category.value).get();
+    for (DocumentSnapshot docSnapshot in nestedCollectionSnapshot.docs) {
+      // Delete each document in the nested collection
+      await docSnapshot.reference.delete();
+    }
+    return true;
+  }catch(e){
+
+    print(e.toString());
+    return false;
+  }
+  }
+
+
 }

@@ -7,10 +7,10 @@ class Service {
   final int price;
   final String name;
   final String description;
-  final  String service_id;
+  final String service_ids;
   Service({
     required this.CategoryName,
-    required this.service_id,
+    required this.service_ids,
     required this.images,
     required this.address,
     required this.price,
@@ -20,6 +20,7 @@ class Service {
 
   // Factory method to create a Service object from a map
   factory Service.fromMap(Map<String, dynamic> map) {
+    print(map);
     return Service(
       CategoryName: map['CategoryName'] ?? "",
       images: List<String>.from(map['images']) ?? [],
@@ -27,7 +28,7 @@ class Service {
       price: map['price'] ?? "",
       name: map['servicesName'] ?? "",
       description: map['description'] ?? "",
-      service_id: map['service_id'] ?? "",
+      service_ids: map['service_id: '] ?? "",
     );
   }
 
@@ -39,7 +40,7 @@ class Service {
       "price": this.price,
       "servicesName": this.name,
       "description": this.description,
-      "service_id": this.service_id,
+      "service_id": this.service_ids,
     };
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/drawerscreens/delete/deletedServices.dart';
+import 'package:home_hub_services/drawerscreens/updateServices/update.dart';
 
 import 'package:home_hub_services/ui/HomeScreen/chart_container.dart';
 import 'package:home_hub_services/ui/HomeScreen/homescreenController.dart';
@@ -81,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                     trailing: Icon(Icons.update),
                     title: const Text('Update Services'),
                     onTap: () {
-
+                      Get.to(Update());
                       // Handle category 1 tap
                     },
                   ),
@@ -124,23 +125,26 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                height: 55,
-                                width: 55,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        controller.userData.value.Images),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _scaffoldKey.currentState?.openDrawer();
-                                  },
-                                ),
-                              ),
+                        Container(
+                        height: 55,
+                        width: 55,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            _scaffoldKey.currentState?.openDrawer();
+                          },
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: controller.userData.value.Images,
+                              placeholder: (context, url) => CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -207,10 +211,10 @@ class HomeScreen extends StatelessWidget {
                                     color: Colors.green.shade300,
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(width: 2)),
+                                ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 5),
+                                      vertical: 10, horizontal: 12),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -221,21 +225,22 @@ class HomeScreen extends StatelessWidget {
                                             Text(
                                               "201",
                                               style: TextStyle(
-                                                  fontSize: 23,
-                                                  color: Colors.white),
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
                                             ),
-                                            0.3.h.addHSpace(),
+                                            0.7.h.addHSpace(),
                                             Text(
                                               "NEW ORDER",
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  color: Colors.white),
+                                                  color: Colors.black),
                                             ),
                                             SizedBox(
                                               height: 2,
                                               width: double.infinity,
                                               child: Divider(
-                                                thickness: 2,
+                                                thickness: 1,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -255,7 +260,7 @@ class HomeScreen extends StatelessWidget {
                                                   Text(
                                                     "Increase 20%",
                                                     style:
-                                                        TextStyle(fontSize: 17),
+                                                        TextStyle(fontSize: 15),
                                                   )
                                                 ],
                                               ),
@@ -273,7 +278,7 @@ class HomeScreen extends StatelessWidget {
                                     color: Colors.red.shade500,
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(width: 2)),
+                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 5),
@@ -288,20 +293,21 @@ class HomeScreen extends StatelessWidget {
                                               "201",
                                               style: TextStyle(
                                                   fontSize: 23,
-                                                  color: Colors.white),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
                                             ),
                                             0.3.h.addHSpace(),
                                             Text(
                                               "Pandding",
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  color: Colors.white),
+                                                  color: Colors.black),
                                             ),
                                             SizedBox(
                                               height: 2,
                                               width: double.infinity,
                                               child: Divider(
-                                                thickness: 2,
+                                                thickness: 1,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -321,7 +327,7 @@ class HomeScreen extends StatelessWidget {
                                                   Text(
                                                     "Increase 20%",
                                                     style:
-                                                        TextStyle(fontSize: 17),
+                                                        TextStyle(fontSize: 15),
                                                   )
                                                 ],
                                               ),
@@ -342,10 +348,10 @@ class HomeScreen extends StatelessWidget {
                               Container(
                                 width: 47.w,
                                 decoration: BoxDecoration(
-                                    color: Colors.yellow,
+                                    color: Colors.yellow.shade900,
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(width: 2)),
+                                   ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 5),
@@ -359,21 +365,22 @@ class HomeScreen extends StatelessWidget {
                                             Text(
                                               "201",
                                               style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                                   fontSize: 23,
-                                                  color: Colors.white),
+                                                  color: Colors.black),
                                             ),
                                             0.3.h.addHSpace(),
                                             Text(
                                               "Watching",
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  color: Colors.white),
+                                                  color: Colors.black),
                                             ),
                                             SizedBox(
                                               height: 2,
                                               width: double.infinity,
                                               child: Divider(
-                                                thickness: 2,
+                                                thickness: 1,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -393,7 +400,7 @@ class HomeScreen extends StatelessWidget {
                                                   Text(
                                                     "Increase 20%",
                                                     style:
-                                                        TextStyle(fontSize: 17),
+                                                        TextStyle(fontSize: 15),
                                                   )
                                                 ],
                                               ),
@@ -411,7 +418,7 @@ class HomeScreen extends StatelessWidget {
                                     color: Colors.blue,
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(width: 2)),
+                                   ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 5),
@@ -459,7 +466,7 @@ class HomeScreen extends StatelessWidget {
                                                   Text(
                                                     "Increase 20%",
                                                     style:
-                                                        TextStyle(fontSize: 17),
+                                                        TextStyle(fontSize: 15),
                                                   )
                                                 ],
                                               ),
@@ -552,6 +559,8 @@ class HomeScreen extends StatelessWidget {
                                                              color: appColor, size: 5.h);
                                                        },
                                                        fit: BoxFit.fill,
+                                                       height: 28.h,
+                                                       width: double.infinity,
                                                        imageUrl: _homeScreenController.services[index].images[0],
                                                      ),
                                                    ),

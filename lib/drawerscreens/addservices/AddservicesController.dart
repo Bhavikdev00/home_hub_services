@@ -111,15 +111,6 @@ class AddServicesController extends GetxController {
     }
   }
 
-  Future<void> pickImages() async {
-    List<XFile>? pickedImages =
-    await ImagePicker().pickMultiImage(imageQuality: 50);
-
-    if (pickedImages != null) {
-      _images.addAll(pickedImages.map((image) => File(image.path)));
-    }
-  }
-
   void Dispose() {
     serviceName.clear();
     imageFile.value = null;
@@ -178,7 +169,7 @@ class AddServicesController extends GetxController {
     var now = DateTime.now();
     var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
     String time = formatter.format(now);
-    Service service = Service(CategoryName: serviceName.text.toString(),service_id: "", images: images, address: address!, price: int.parse(price.text.toString()), name: serviceName.text.toString(), description: description.text.toString());
+    Service service = Service(CategoryName: serviceName.text.toString(),service_ids: "", images: images, address: address!, price: int.parse(price.text.toString()), name: serviceName.text.toString(), description: description.text.toString());
 
     Services services = Services(servicesName: serviceName.text.toString(),
         CreatedAt: time,
@@ -195,6 +186,7 @@ class AddServicesController extends GetxController {
     DocumentReference documentReference =
     await servicesDataProvider.collection('services').add({
       'servicesName' : service.CategoryName,
+      'description' : service.description,
       'CategoryName': categoryServices.value,
       'address': services.categoryName!.address,
       'price' : services.categoryName!.price,

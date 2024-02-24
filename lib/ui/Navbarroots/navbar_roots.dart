@@ -18,7 +18,7 @@ class NavBarRoot extends StatelessWidget {
             () {
           return  BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Color(0xFFf8658f),
+            selectedItemColor: Color(0xFFEB8605),
             unselectedItemColor: Colors.black26,
             selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             currentIndex: _navbarController.selectedIndex.value,
