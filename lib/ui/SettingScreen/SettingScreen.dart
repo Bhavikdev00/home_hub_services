@@ -2,12 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:home_hub_services/ui/SettingScreen/profile/profileData.dart';
 import 'package:home_hub_services/ui/SettingScreen/settingScreenControlls.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../../constraint/app_color.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -46,7 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 30,
               ),
               Obx(() => _controllers.isLoading.value ? LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h): ListTile(
-                title: Text(_controllers.Name.value,style: TextStyle(
+                title: Text(_controllers.servicesData.value!.fname,style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 25,
                 ),),
@@ -55,12 +57,12 @@ class _SettingScreenState extends State<SettingScreen> {
                   width: 60,
                   child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: _controllers.NetworkImages.value,
+                      imageUrl: _controllers.servicesData.value!.Images,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                subtitle: Text(_controllers.services.value),
+                subtitle: Text(_controllers.servicesData.value!.services!),
               )),
 
               Divider(
@@ -68,7 +70,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               ListTile(
                 onTap: () {
-                  _controllers.loadUserData();
+                  Get.to(ProfileData());
                 },
                 leading: Container(
                   padding: EdgeInsets.all(10),
@@ -95,7 +97,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () {},
+                onTap: () async {
+                  await _launchUrl();
+                  },
                 leading: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -231,4 +235,18 @@ class _SettingScreenState extends State<SettingScreen> {
       ),
     );
   }
+
+    // Future<void> launchUrl(String urlString) async {
+    //   if (await launchUrl(urlString)) { // Check if the URL can be launched
+    //     await launch(urlString);
+    //   } else {
+    //     throw 'Could not launch $urlString'; // throw could be used to handle erroneous situations
+    //   }
+    // }
+    Future<void> _launchUrl() async {
+      final Uri _url = Uri.parse('https://flutter.dev');
+      if (!await launchUrl(_url)) {
+        throw Exception('Could not launch $_url');
+      }
+    }
 }

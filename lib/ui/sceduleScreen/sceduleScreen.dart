@@ -132,9 +132,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
               _seduleWigits[buttonindex],
             ],
           ),

@@ -76,11 +76,7 @@ class RegisterDetailsController extends GetxController{
     loadCategoryList();
     _bindControllers();
   }
-  void initTimer() {
-    // Future.delayed(Duration(seconds: 1), () {
-    //
-    // });
-  }
+
 
 
   var selectedServices = Rx<String?>(null);

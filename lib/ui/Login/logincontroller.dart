@@ -16,7 +16,6 @@ class LoginController extends GetxController {
   RxBool isLoading = false.obs;
   final userCheck = FirebaseFirestore.instance.collection("service_providers");
   RxBool checkEmail = false.obs;
-  // final GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
   void dispose() {

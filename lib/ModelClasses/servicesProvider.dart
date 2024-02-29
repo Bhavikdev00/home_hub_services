@@ -1,5 +1,5 @@
 class ServicesData{
-  String Uid;
+  String? Uid;
   String fname;
   String lname;
   String? Did;
@@ -9,28 +9,26 @@ class ServicesData{
   String contectnumber;
   String contectNumber2;
   String address;
-  String services;
-  String password;
-  String useraadharcard;
+  String? services;
+  String? password;
+  String? useraadharcard;
   ServicesData(
-      {required this.Uid,
+      { this.Uid,
         required this.fname,
         required this.lname,
-      this.Did,
         this.status,
       required this.Images,
       required this.email,
       required this.contectnumber,
       required this.contectNumber2,
       required this.address,
-      required this.services,
-        required this.useraadharcard,
-      required this.password});
+       this.services,
+         this.useraadharcard,
+       this.password});
 
   Map<String, dynamic> tomap() {
     return {
       "Uid": this.Uid,
-      "Did": this.Did,
       "Images": this.Images,
       "status" : this.status,
       "email": this.email,
@@ -51,12 +49,11 @@ class ServicesData{
       Uid: map["Uid"] ?? "",
       fname: map["fname"]?? "",
       lname: map["lname"] ?? "",
-      Did: map["Did"] ?? "",
       Images: map["Images"] ?? "",
       status: map["status"],
       email: map["email"] ?? "",
-      contectnumber: map["contectnumber"] ?? "",
-      contectNumber2: map["contectNumber2"] ?? "",
+      contectnumber: map["contact"] ?? "",
+      contectNumber2: map["contact(optional)"] ?? "",
       address: map["address"] ?? "",
       services: map["services"] ?? "",
       password: map["password"] ?? "",

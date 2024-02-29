@@ -16,7 +16,6 @@ class ServicesInfo extends StatelessWidget {
   final Service getdata = Get.arguments;
   final ServiceInfoController homeScreenController = Get.put(ServiceInfoController());
 
-  List<String> services = ["All", "Cleaning", "Repairing", "Painting"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +61,7 @@ class ServicesInfo extends StatelessWidget {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    height: 80,
+                    height: 90,
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics:  BouncingScrollPhysics(),
@@ -79,7 +78,7 @@ class ServicesInfo extends StatelessWidget {
                                 duration: const Duration(milliseconds: 300),
                                 margin: const EdgeInsets.all(5),
                                 width: 90,
-                                height: 55,
+                                height: 60,
                                 decoration: BoxDecoration(
                                   color: controller.buttonindex == index
                                       ? Colors.white70

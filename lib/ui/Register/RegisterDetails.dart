@@ -215,8 +215,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                             4.w.addWSpace(),
                             Expanded(
                               child: TextFormField(
-                                controller:
-                                    _registerDetailsController.contactOptional,
+                                controller: _registerDetailsController.contactOptional,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly

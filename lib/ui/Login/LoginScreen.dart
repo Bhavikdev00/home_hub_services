@@ -130,7 +130,7 @@ class _LoginState extends State<Login> {
                                 if (checkStatus is UserCredential) {
                                   Get.offAllNamed(Routes.navbarRoots);
                                 } else {
-                                  print("Error");
+                                  print(checkStatus);
                                 }
                               } else {
                                 print("Error");

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:path/path.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,9 +11,10 @@ import 'package:image_picker/image_picker.dart';
 import '../../ModelClasses/service.dart';
 
 class UpdateController extends GetxController {
-  RxBool showContent = false.obs;
+  RxBool showContent = true.obs;
   RxString userid = RxString('');
   RxBool LoadingServices = false.obs;
+  RxBool UpdateLoading = true.obs;
   Rx<File?> imageFile = Rx<File?>(null);
   final RxList<File> _images = <File>[].obs;
 
@@ -128,25 +130,35 @@ class UpdateController extends GetxController {
 
   Future<bool> updatedData(
       {required String desc,
+        required List<String> listOfImages,
       required String sname,
       required int price,
       required String serviceId}) async {
     // List<String> images = await ();
    try{
-     List<String> images =await updateImagesData();
+     UpdateLoading.value = false;
+     List<String>? images;
+     if(imagesPick.isEmpty){
+       images = listOfImages;
+       print("Not Pick");
+     }else{
+       images =await updateImagesData();
+       print("Pick Images");
+     }
      final servicesUpdate = await FirebaseFirestore.instance
          .collection("Services-Provider(Provider)")
          .doc(userid.value)
          .collection("services");
-     // await servicesUpdate.doc(serviceId).update({
-     //   "servicesName": sname,
-     //   "images" : images,
-     //   "price" : price,
-     //   "description" : desc,
-     // });
-     print(serviceId);
+     await servicesUpdate.doc(serviceId).update({
+       "servicesName": sname,
+       "images" : images,
+       "price" : price,
+       "description" : desc,
+     });
+     UpdateLoading.value = true;
      return true;
    }catch(e){
+     UpdateLoading.value = true;
      print(e.toString());
      return false;
    }

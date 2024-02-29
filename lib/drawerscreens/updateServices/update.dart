@@ -142,14 +142,13 @@ class _UpdateState extends State<Update> {
                       // print(services[0].service_id);
 
                        services = await update.getData();
-                       print(services[0].service_ids);
-                      // setState(() {});
-                      // if(services.length == 0){
-                      //   Get.snackbar("Data Nothing", "Search Again",snackPosition: SnackPosition.BOTTOM,backgroundColor: appColor);
-                      // }else{
-                      //   Get.to(UpdateData1(services[0]));
-                      //   print("Data Hear");
-                      // }
+                      setState(() {});
+                      if(services.length == 0){
+                        Get.snackbar("Data Nothing", "Search Again",snackPosition: SnackPosition.BOTTOM,backgroundColor: appColor);
+                      }else{
+                        Get.to(UpdateData1(services[0]));
+                        print("Data Hear");
+                      }
                     }),
               ),
             ],

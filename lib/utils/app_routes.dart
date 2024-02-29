@@ -7,6 +7,7 @@ import 'package:home_hub_services/ui/Forgetpassword/Forgetpassword.dart';
 import 'package:home_hub_services/ui/Navbarroots/navbar_roots.dart';
 import 'package:home_hub_services/ui/Register/RegisterDetails.dart';
 import 'package:home_hub_services/ui/Register/register.dart';
+import 'package:home_hub_services/ui/containercode/newordercode.dart';
 import 'package:home_hub_services/ui/servicesInfo/servicesInfo.dart';
 
 import '../ui/Forgetpassword/resetpassword.dart';
@@ -27,6 +28,7 @@ class Routes{
   static String password = '/Password';
   static String addServices = '/addServices';
   static String servicesInfo = '/ServicesInfo';
+  static String orderHistory = '/orderHistory';
   static final getPages = [
     GetPage(name: splashScreen, page: () => SplashScreen()),
     GetPage(name: loginScreen, page: () => Login(),),
@@ -40,5 +42,6 @@ class Routes{
     GetPage(name: navbarRoots, page: () => NavBarRoot(),),
     GetPage(name: addServices, page: () => AddServices()),
     GetPage(name: servicesInfo, page: () => ServicesInfo(),),
+    GetPage(name: orderHistory, page: () => OrderHistory(),)
   ];
 }
