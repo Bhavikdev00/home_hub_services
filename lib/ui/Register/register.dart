@@ -119,9 +119,9 @@ class Register extends StatelessWidget {
                             if (_globel.currentState!.validate()) {
                               Get.toNamed(Routes.registerDetails, arguments: {
                                 "email":
-                                    _registerController.emailController.text,
+                                    _registerController.emailController.text.trim(),
                                 "password":
-                                    _registerController.passwordController.text
+                                    _registerController.passwordController.text.trim()
                               });
                             } else {
                               print("Not Success");

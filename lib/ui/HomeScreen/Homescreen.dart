@@ -104,7 +104,12 @@ class HomeScreen extends StatelessWidget {
       body: Obx(() {
         if (_homeScreenController.isLoading.value) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h),
+              ],
+            ),
           );
         } else {
           return SafeArea(
@@ -564,7 +569,7 @@ class HomeScreen extends StatelessWidget {
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 10),
                                             child: Text(
-                                              _homeScreenController.services[index].name,
+                                              _homeScreenController.services[index].serviceName,
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,

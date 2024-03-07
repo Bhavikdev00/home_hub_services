@@ -9,6 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 import '../../constraint/app_assets.dart';
 import '../../constraint/app_color.dart';
+import '../notification_services/notification_service.dart';
 import 'logincontroller.dart';
 
 class Login extends StatefulWidget {
@@ -128,6 +129,7 @@ class _LoginState extends State<Login> {
                                 var checkStatus = await _controller
                                     .signInWithEmailAndPassword();
                                 if (checkStatus is UserCredential) {
+
                                   Get.offAllNamed(Routes.navbarRoots);
                                 } else {
                                   print(checkStatus);

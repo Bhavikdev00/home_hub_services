@@ -5,7 +5,8 @@ class StorageService{
   late GetStorage _storage;
   static String registerStatus = "Register";
   static String loginStatus = "LoginStatus";
-
+  static String userId = "Userid";
+  static String mcfToken = "fcmToken";
   factory StorageService() {
     return _instance;
   }
@@ -36,5 +37,19 @@ class StorageService{
 
   Future<void> removeDAta() async {
     await _storage.erase();
+  }
+
+  UpdateUserId(String Userid) async {
+    await _storage.write(userId, Userid);
+  }
+  String getUserid(){
+    return _storage.read(userId) ?? "";
+  }
+
+  updateServices(String fcmToken) async {
+    await _storage.write(mcfToken, fcmToken);
+  }
+  String getFcmtoken(){
+    return _storage.read(mcfToken) ?? "";
   }
 }

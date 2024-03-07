@@ -3,19 +3,22 @@ class ServicesData{
   String fname;
   String lname;
   String? Did;
-  String? status;
   String Images;
   String email;
   String contectnumber;
   String contectNumber2;
   String address;
+  String? status;
   String? services;
   String? password;
   String? useraadharcard;
+  String? fcmToken;
   ServicesData(
       { this.Uid,
+        this.fcmToken,
         required this.fname,
         required this.lname,
+        this.Did,
         this.status,
       required this.Images,
       required this.email,
@@ -28,11 +31,13 @@ class ServicesData{
 
   Map<String, dynamic> tomap() {
     return {
+      "fcmToken" : this.fcmToken,
       "Uid": this.Uid,
       "Images": this.Images,
-      "status" : this.status,
       "email": this.email,
       "contact": this.contectnumber,
+      "status": this.status,
+      "did" : this.Did,
       "contact(optional)": this.contectNumber2,
       "address": this.address,
       "services": this.services,
@@ -45,12 +50,14 @@ class ServicesData{
 
   factory ServicesData.formMap(Map<String, dynamic> map) {
     return ServicesData(
+      fcmToken: map["fcmToken"] ?? "",
       useraadharcard: map["useraadharcard"] ?? "",
       Uid: map["Uid"] ?? "",
       fname: map["fname"]?? "",
+      Did: map["did"] ?? "",
       lname: map["lname"] ?? "",
       Images: map["Images"] ?? "",
-      status: map["status"],
+      status: map["status"] ?? "",
       email: map["email"] ?? "",
       contectnumber: map["contact"] ?? "",
       contectNumber2: map["contact(optional)"] ?? "",

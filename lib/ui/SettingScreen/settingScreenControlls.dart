@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/getstorage/StorageClass.dart';
 
 import '../../ModelClasses/servicesProvider.dart';
@@ -10,7 +11,7 @@ import '../HomeScreen/authservices.dart';
 class SettingsControllers extends GetxController {
   final AuthService _authService = Get.put(AuthService());
   StorageService _storageService = StorageService();
-  var isLoading = true.obs;
+  var isLoading = false.obs;
    Rx<ServicesData?> servicesData = Rx<ServicesData?>(null);
 
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,20 +22,24 @@ class SettingsControllers extends GetxController {
     loadUserData();
   }
 
-  Future<void> loadUserData() async {
-    isLoading.value = true;
-    String? uid = _auth?.currentUser!.uid;
-    // print(_auth?.uid);
-    await FirebaseFirestore
-        .instance
-        .collection('service_providers')
-        .where('Uid', isEqualTo: uid)
-        .limit(1).snapshots().listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          if(snapshot.docs.isNotEmpty){
-            servicesData.value  = ServicesData.formMap(snapshot.docs.first.data());
-          }
-    });
-    isLoading.value = false;
+ void loadUserData() async {
+   try{
+     isLoading.value = true;
+     String? uid = _auth.currentUser!.uid;
+     // print(_auth?.uid);
+      FirebaseFirestore
+         .instance
+         .collection('service_providers')
+         .where('Uid', isEqualTo: uid)
+         .limit(1).snapshots().listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+       if(snapshot.docs.isNotEmpty){
+         servicesData.value  = ServicesData.formMap(snapshot.docs.first.data());
+       }
+     });
+     isLoading.value = false;
+   }catch(e){
+     isLoading.value = false;
+   }
   }
   Future<void> signOut() async {
     try {

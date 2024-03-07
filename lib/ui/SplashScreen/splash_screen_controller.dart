@@ -49,20 +49,4 @@ class SplashScreenController extends GetxController {
       }
     });
   }
-
-  // Future<bool> checkAdminAllow(String uid) async {
-  //   print("Call");
-  //   String Userid = uid;
-  //   QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
-  //       .instance
-  //       .collection('service_provider_requests')
-  //       .where('Uid', isEqualTo: uid)
-  //       .limit(1)
-  //       .get();
-  //   if(querySnapshot.docs.first["status"] == "Rejected"){
-  //     return false;
-  //   }else{
-  //     return true;
-  //   }
-  // }
 }

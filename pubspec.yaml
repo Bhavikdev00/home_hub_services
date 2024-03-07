@@ -28,12 +28,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  firebase_messaging: ^14.7.18
+  flutter_local_notifications: ^16.3.3
   intl: ^0.19.0
   image_picker: ^1.0.6
-  syncfusion_flutter_charts: ^24.1.45+2
+  http:
   material_design_icons_flutter: ^7.0.7296
   custom_clippers: ^2.0.0
   awesome_icons: ^1.1.0
+  readmore: ^2.2.0
   firebase_auth: ^4.16.0
   get: ^4.6.6
   sizer: ^2.0.15

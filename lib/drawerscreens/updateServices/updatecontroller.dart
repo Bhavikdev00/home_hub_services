@@ -19,6 +19,7 @@ class UpdateController extends GetxController {
   final RxList<File> _images = <File>[].obs;
 
   List<File> get imagesPick => _images;
+  List<ServiceResponseModel> services = <ServiceResponseModel>[];
 
   @override
   void onInit() {
@@ -40,16 +41,16 @@ class UpdateController extends GetxController {
     }
   }
 
-  var Services = Rx<String?>(null);
-  var category = Rx<String?>(null);
+  var category_data = Rx<String?>(null);
+  var services_data = Rx<String?>(null);
 
   void setSelectedService(String? service) {
-    Services.value = service;
+    category_data.value = service;
     update();
   }
 
   void setSelectedCategory(String? service) {
-    category.value = service;
+    services_data.value = service;
     update();
   }
 
@@ -59,22 +60,19 @@ class UpdateController extends GetxController {
   Future<void> loadCategory() async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
         await FirebaseFirestore.instance.collection("servicesInfo").get();
-    CollectionReference servicesCollection = FirebaseFirestore.instance
-        .collection('Services-Provider(Provider)')
-        .doc(userid.value)
-        .collection('services');
+    CollectionReference servicesCollection =
+        FirebaseFirestore.instance.collection('Services-Provider(Provider)');
 
     try {
-      QuerySnapshot querySnapshot = await servicesCollection.get();
+      QuerySnapshot querySnapshot = await servicesCollection.where("userId",isEqualTo: userid.value).get();
       querySnapshot.docs.forEach((doc) {
-        selectedCategory.add(doc["servicesName"]);
+        selectedCategory.add(doc["service_name"]);
       });
     } catch (e) {
       print("The Error Is $e");
     }
     for (QueryDocumentSnapshot<Map<String, dynamic>> document
         in snapshot.docs) {
-      // Change "fieldName" to the actual field name you want to extract
       String fieldValue = document['ServicesName'];
 
       if (fieldValue != null) {
@@ -84,23 +82,22 @@ class UpdateController extends GetxController {
   }
 
 // Get The Data From Firebase FIrestore
-  Future<List<Service>> getData() async {
+  Future<List<ServiceResponseModel>> getData() async {
     LoadingServices.value = true;
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-        .collection('Services-Provider(Provider)')
-        .doc(userid.value)
-        .collection('services');
+        .collection('Services-Provider(Provider)');
 
-    if (Services.value != null) {
+    if (category_data.value != null) {
       // Ensure 'CategoryName' is the correct field name in your Firestore documents
       query = query
-          .where('CategoryName', isEqualTo: Services.value)
-          .where("servicesName", isEqualTo: category.value);
+          .where("category_name", isEqualTo: category_data.value)
+        .where("service_name", isEqualTo: services_data.value)
+        .where("userId",isEqualTo: userid.value);
     }
-    List<Service> services = <Service>[];
+
     var check = await query.get();
     for (var element in check.docs) {
-      services.add(Service.fromMap(element.data()));
+      services.add(ServiceResponseModel.fromMap(element.data()));
     }
     LoadingServices.value = false;
     return services;
@@ -128,53 +125,46 @@ class UpdateController extends GetxController {
     }
   }
 
-  Future<bool> updatedData(
-      {required String desc,
-        required List<String> listOfImages,
-      required String sname,
-      required int price,
-      required String serviceId}) async {
-    // List<String> images = await ();
-   try{
-     UpdateLoading.value = false;
-     List<String>? images;
-     if(imagesPick.isEmpty){
-       images = listOfImages;
-       print("Not Pick");
-     }else{
-       images =await updateImagesData();
-       print("Pick Images");
-     }
-     final servicesUpdate = await FirebaseFirestore.instance
-         .collection("Services-Provider(Provider)")
-         .doc(userid.value)
-         .collection("services");
-     await servicesUpdate.doc(serviceId).update({
-       "servicesName": sname,
-       "images" : images,
-       "price" : price,
-       "description" : desc,
-     });
-     UpdateLoading.value = true;
-     return true;
-   }catch(e){
-     UpdateLoading.value = true;
-     print(e.toString());
-     return false;
-   }
-  }
+
 
   Future<List<String>> updateImagesData() async {
     FirebaseStorage storage = FirebaseStorage.instance;
     List<String> downloadUrls = [];
     for (var image in imagesPick) {
       String extentions = extension(image.path);
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extentions;
+      String fileName =
+          DateTime.now().millisecondsSinceEpoch.toString() + extentions;
       Reference ref = storage.ref().child('Images').child(fileName);
       await ref.putFile(image);
       String downloadUrl = await ref.getDownloadURL();
       downloadUrls.add(downloadUrl);
     }
     return downloadUrls;
+  }
+
+  updatedData({required List<String> listOfImages, required int price, required String desc, required String sname, required String serviceId}) async {
+    try{
+      UpdateLoading.value = false;
+      List<String>? images;
+      if(imagesPick.isEmpty){
+        images = listOfImages;
+      }else{
+        images =await updateImagesData();
+      }
+      DocumentReference servicesUpdate = await FirebaseFirestore.instance
+          .collection("Services-Provider(Provider)").doc(serviceId);
+
+      await servicesUpdate.update({
+        "service_name": sname,
+          "images" : images,
+          "price" : price,
+          "description" : desc,
+      });
+      return true;
+    }catch(e){
+      print(e.toString());
+      return false;
+    }
+
   }
 }

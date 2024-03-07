@@ -23,7 +23,7 @@ class _UpdateState extends State<Update> {
 
   final _SecondKey = GlobalKey<FormState>();
 
-  List<Service> services = [];
+  List<ServiceResponseModel> services = [];
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _UpdateState extends State<Update> {
               ),
               1.h.addHSpace(),
               Obx(
-                () => update.Services == null
+                () => update.category_data == null
                     ? Container()
                     : Container(
                         decoration: BoxDecoration(
@@ -73,7 +73,7 @@ class _UpdateState extends State<Update> {
                             }
                             return null; // Return null if validation succeeds
                           },
-                          value: update.Services.value,
+                          value: update.category_data.value,
                           hint: const Text('Selected Services'),
                           onChanged: (String? newValue) {
                             update.setSelectedService(newValue);
@@ -98,7 +98,7 @@ class _UpdateState extends State<Update> {
               ),
               1.h.addHSpace(),
               Obx(
-                () => update.category == null
+                () => update.services_data == null
                     ? Container()
                     : Container(
                         decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class _UpdateState extends State<Update> {
                             }
                             return null; // Return null if validation succeeds
                           },
-                          value: update.category.value,
+                          value: update.services_data.value,
                           hint: const Text('Selected Category'),
                           onChanged: (String? newValue) {
                             update.setSelectedCategory(newValue);
@@ -140,8 +140,7 @@ class _UpdateState extends State<Update> {
                     text: "Services Search",
                     onTap: () async {
                       // print(services[0].service_id);
-
-                       services = await update.getData();
+                      services = await update.getData();
                       setState(() {});
                       if(services.length == 0){
                         Get.snackbar("Data Nothing", "Search Again",snackPosition: SnackPosition.BOTTOM,backgroundColor: appColor);

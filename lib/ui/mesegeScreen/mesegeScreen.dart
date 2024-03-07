@@ -1,6 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:home_hub_services/ui/mesegeScreen/mesegesController.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
+import '../../constraint/app_color.dart';
 import 'chatscreen.dart';
 
 class MessageScreen extends StatelessWidget {
@@ -14,11 +19,16 @@ class MessageScreen extends StatelessWidget {
     "doctor1.jpg",
     "doctor2.jpg",
   ];
-
+  MessegeController _messegeController = Get.put(MessegeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          return Future.delayed(Duration(seconds: 1),() async{
+           await _messegeController.loadData();
+          },);
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,7 +50,9 @@ class MessageScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                          spreadRadius: 2, blurRadius: 10, color: Colors.black12)
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          color: Colors.black12)
                     ]),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,135 +75,72 @@ class MessageScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Active Client",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 90,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: images.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 12),
-                    width: 65,
-                    height: 65,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black12,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                          )
-                        ]),
-                    child: Stack(
-                      textDirection: TextDirection.rtl,
-                      children: [
-                        Center(
-                          child: Container(
-                            height: 65,
-                            width: 65,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.asset(
-                                "assets/images/${images[index]}",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(4),
-                          padding: EdgeInsets.all(3),
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.green, shape: BoxShape.circle),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(2),
-                          padding: EdgeInsets.all(3),
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.green, shape: BoxShape.circle),
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Client Chart",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            8.8.addHSpace(),
-            Container(
-              child: ListView.separated(
-                padding: EdgeInsets.zero, // Add this line to remove top padding
-                separatorBuilder: (context, index) {
-                  return Container(
-                    height: 1.h,
-                  );
-                },
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: images.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    child: ListTile(
+
+            3.h.addHSpace(),
+            Obx(
+              () =>  Container(
+                child: ListView.separated(
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.zero, // Add this line to remove top padding
+                  separatorBuilder: (context, index) {
+                    return Container(
+                      height: 1.h,
+                    );
+                  },
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: _messegeController.chatRooms.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ChatScreen()),
-                        );
+
+                        Get.to(
+                            ChatScreen(_messegeController.chatRooms[index]));
                       },
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                        AssetImage("assets/images/${images[index]}"),
+                      leading: Container(
+                        height: 200,
+                        width: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.red),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child:
+                          _messegeController.userDatas[index].profileImage ==
+                              ""
+                              ? Image.asset(
+                            "assets/images/profile_image.jpg",
+                            fit: BoxFit.fill,
+                          )
+                              : CachedNetworkImage(
+                              fit: BoxFit.fill,
+                              imageUrl: _messegeController
+                                  .userDatas[index].profileImage),
+                        ),
                       ),
                       title: Text(
-                        "Dr. Doctor Name",
-                        style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        "${_messegeController.chatRooms[index].firstUid}",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
                         "Hello, Doctor are you there?",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.black),
                       ),
                       trailing: Text(
-                        "12:30",
-                        style: TextStyle(fontSize: 15, color: Colors.black54),
+                        "${_messegeController.chatRooms[index].LastChat.hour} : ${_messegeController.chatRooms[index].LastChat.minute}",
+                        style: TextStyle(
+                            fontSize: 15, color: Colors.black54),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),
+              )
             ),
-
           ],
         ),
       ),

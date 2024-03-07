@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:home_hub_services/drawerscreens/delete/deletedServicescontroller.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../constraint/app_color.dart';
 
 class deleteServices extends StatefulWidget {
    deleteServices({super.key});
@@ -27,103 +30,105 @@ class _deleteServicesState extends State<deleteServices> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Form(
           key: _globalKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              1.h.addHSpace(),
-              Text("Selected Services",style: TextStyle(fontSize: 19,color: Colors.black,fontWeight: FontWeight.w400),),
-              1.h.addHSpace(),
-              Obx(
-                    () => deleteController.Services == null
-                    ? Container()
-                    : Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 20),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+          child: Obx(
+            () => deleteController.isLoading.value ? LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h) :  Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                1.h.addHSpace(),
+                Text("Selected Services",style: TextStyle(fontSize: 19,color: Colors.black,fontWeight: FontWeight.w400),),
+                1.h.addHSpace(),
+                Obx(
+                      () => deleteController.category_data == null
+                      ? Container()
+                      : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a Category'; // Validation message
-                      }
-                      return null; // Return null if validation succeeds
-                    },
-                    value: deleteController.Services.value,
-                    hint: const Text('Selected Services'),
-                    onChanged: (String? newValue) {
-                      deleteController.setSelectedService(newValue);
-                    },
-                    items: deleteController
-                        .selectServices.value
-                        .map((String service) {
-                      return DropdownMenuItem<String>(
-                        value: service,
-                        child: Text(service),
-                      );
-                    }).toList(),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a Category'; // Validation message
+                        }
+                        return null; // Return null if validation succeeds
+                      },
+                      value: deleteController.category_data.value,
+                      hint: const Text('Selected Services'),
+                      onChanged: (String? newValue) {
+                        deleteController.setSelectedService(newValue);
+                      },
+                      items: deleteController
+                          .selectServices.value
+                          .map((String service) {
+                        return DropdownMenuItem<String>(
+                          value: service,
+                          child: Text(service),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              1.h.addHSpace(),
-              Text("Selected Category",style: TextStyle(fontSize: 19,color: Colors.black,fontWeight: FontWeight.w400),),
-              1.h.addHSpace(),
-              Obx(
-                    () => deleteController.category == null
-                    ? Container()
-                    : Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 20),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                1.h.addHSpace(),
+                Text("Selected Category",style: TextStyle(fontSize: 19,color: Colors.black,fontWeight: FontWeight.w400),),
+                1.h.addHSpace(),
+                Obx(
+                      () => deleteController.services_data == null
+                      ? Container()
+                      : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a Category'; // Validation message
-                      }
-                      return null; // Return null if validation succeeds
-                    },
-                    value: deleteController.category.value,
-                    hint: const Text('Selected Category'),
-                    onChanged: (String? newValue) {
-                      deleteController.setSelectedCategory(newValue);
-                    },
-                    items: deleteController
-                        .selectedCategory
-                        .map((String service) {
-                      return DropdownMenuItem<String>(
-                        value: service,
-                        child: Text(service),
-                      );
-                    }).toList(),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a Category'; // Validation message
+                        }
+                        return null; // Return null if validation succeeds
+                      },
+                      value: deleteController.services_data.value,
+                      hint: const Text('Selected Category'),
+                      onChanged: (String? newValue) {
+                        deleteController.setSelectedCategory(newValue);
+                      },
+                      items: deleteController
+                          .selectedCategory
+                          .map((String service) {
+                        return DropdownMenuItem<String>(
+                          value: service,
+                          child: Text(service),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 12),
-                child: appButton(text: "Delete Services",onTap: () async {
-                  var checkData =  await deleteController.deletedData();
-                  if(checkData){
-                    Get.back();
-                  }else{
-                    print("Error");
-                  }
-                }),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 12),
+                  child: appButton(text: "Delete Services",onTap: () async {
+                    var checkData =  await deleteController.deleteDocumentAndSubcollections("Services-Provider(Provider)");
+                    if(checkData){
+                      Get.back();
+                    }else{
+                      print("Error");
+                    }
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,17 +1,14 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/service.dart';
 
-class DeleteServicesController extends GetxController{
-
-
+class DeleteServicesController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    print("Call");
     getCurrentUser();
     loadCategory();
   }
@@ -19,31 +16,29 @@ class DeleteServicesController extends GetxController{
   @override
   void dispose() {
     // Clean up tasks such as closing streams, canceling subscriptions, etc.
-    Services.close();
-    category.close();
+    category_data.close();
+    services_data.close();
     super.dispose();
   }
 
+  RxList<ServiceResponseModel> services = <ServiceResponseModel>[].obs;
 
-  RxList<Service> services = <Service>[].obs;
-
-  var Services = Rx<String?>(null);
-  var category = Rx<String?>(null);
+  var category_data = Rx<String?>(null);
+  var services_data = Rx<String?>(null);
   RxString userid = RxString('');
-
+  RxBool isLoading = false.obs;
   void setSelectedService(String? service) {
-    Services.value = service;
+    category_data.value = service;
     update();
   }
   void setSelectedCategory(String? service) {
-    category.value = service;
+    services_data.value = service;
     update();
   }
 
-
-
   RxList<String> selectServices = <String>[].obs;
   RxList<String> selectedCategory = <String>[].obs;
+
   void getCurrentUser() {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user = auth.currentUser;
@@ -57,50 +52,58 @@ class DeleteServicesController extends GetxController{
   }
 
   Future<void> loadCategory() async {
-    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-        .instance.collection("servicesInfo").get();
-    CollectionReference servicesCollection = FirebaseFirestore.instance
-        .collection('Services-Provider(Provider)')
-        .doc(userid.value)
-        .collection('services');
-
-    try{
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection("servicesInfo").get();
+    CollectionReference servicesCollection =
+        FirebaseFirestore.instance.collection('Services-Provider(Provider)');
+    try {
       QuerySnapshot querySnapshot = await servicesCollection.get();
       querySnapshot.docs.forEach((doc) {
-        selectedCategory.add(doc["servicesName"]);
+        selectedCategory.add(doc["service_name"]);
       });
-    }catch(e){
+    } catch (e) {
       print("The Error Is $e");
     }
     for (QueryDocumentSnapshot<Map<String, dynamic>> document
-    in snapshot.docs) {
+        in snapshot.docs) {
       // Change "fieldName" to the actual field name you want to extract
       String fieldValue = document['ServicesName'];
-      print(fieldValue);
+
       if (fieldValue != null) {
         selectServices.add(fieldValue);
       }
     }
     update();
   }
+  Future<bool> deleteDocumentAndSubcollections(String collectionPath) async {
+    try {
+      isLoading.value = true;
+      final QuerySnapshot parentSnapshot  = await FirebaseFirestore.instance
+          .collection("Services-Provider(Provider)")
+          .where("category_name", isEqualTo: category_data.value)
+          .where("service_name", isEqualTo: services_data.value)
+          .where("userId",isEqualTo: userid.value)
+          .get();
 
-  Future<bool> deletedData() async {
-  try{
-    CollectionReference parentCollectionRef = FirebaseFirestore.instance.collection('Services-Provider(Provider)');
-    DocumentReference parentDocRef = parentCollectionRef.doc(userid.value);
-    CollectionReference nestedCollectionRef = parentDocRef.collection('services');
-    QuerySnapshot nestedCollectionSnapshot = await nestedCollectionRef.where("CategoryName",isEqualTo: Services.value).where("servicesName",isEqualTo:category.value).get();
-    for (DocumentSnapshot docSnapshot in nestedCollectionSnapshot.docs) {
-      // Delete each document in the nested collection
-      await docSnapshot.reference.delete();
+      if(parentSnapshot.docs.isNotEmpty) {
+        final QueryDocumentSnapshot documentSnapshot = parentSnapshot.docs[0];
+        final dynamic singleData = documentSnapshot.get("service_ids");
+        final QuerySnapshot subcollectionSnapshot = await FirebaseFirestore
+            .instance
+            .collection('$collectionPath/$singleData/ratings')
+            .get();
+        for (QueryDocumentSnapshot docSnapshot in subcollectionSnapshot.docs) {
+          await docSnapshot.reference.delete();
+        }
+        await FirebaseFirestore.instance.collection(collectionPath).doc(
+            singleData).delete();
+      }
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      return false;
     }
-    return true;
-  }catch(e){
-
-    print(e.toString());
-    return false;
   }
-  }
-
 
 }

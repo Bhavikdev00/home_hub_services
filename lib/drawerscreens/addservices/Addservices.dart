@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
 
 import 'package:home_hub_services/utils/extension.dart';
@@ -14,12 +13,14 @@ import 'AddservicesController.dart';
 
 class AddServices extends StatelessWidget {
   AddServicesController _controller = Get.put(AddServicesController());
+
   final _globalKey = GlobalKey<FormState>();
+
   final _SecondKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Add Services",style: TextStyle(fontSize: 25,fontWeight:FontWeight.bold),),
 
@@ -302,6 +303,7 @@ class AddServices extends StatelessWidget {
                       _controller.setSelectedService(newValue);
                     },
                     items: _controller
+                        // ignore: invalid_use_of_protected_member
                         .selectServices.value
                         .map((String service) {
                       return DropdownMenuItem<String>(

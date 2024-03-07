@@ -17,7 +17,7 @@ import '../../utils/app_routes.dart';
 
 class UpdateData1 extends StatefulWidget {
 
-  Service service;
+  ServiceResponseModel service;
 
   UpdateData1(this.service);
 
@@ -28,7 +28,7 @@ class UpdateData1 extends StatefulWidget {
 class _UpdateData1State extends State<UpdateData1> {
 
 
-  Service service;
+  ServiceResponseModel service;
 
   _UpdateData1State(this.service);
 
@@ -41,7 +41,7 @@ class _UpdateData1State extends State<UpdateData1> {
     // TODO: implement initState
     super.initState();
     description.text = service.description;
-    servicesName.text = service.name;
+    servicesName.text = service.serviceName;
     price.text = service.price.toString();
   }
 
@@ -167,7 +167,7 @@ class _UpdateData1State extends State<UpdateData1> {
                     ),
                   ),
                   1.h.addHSpace(),
-                  Text("Update Description",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 20),),
+                  Text("Update Images",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 20),),
                   1.h.addHSpace(),
                   Row(
                     children: [
@@ -273,7 +273,7 @@ class _UpdateData1State extends State<UpdateData1> {
                       String descriptions = description.text.toString();
                       String servicesNames = servicesName.text.toString();
                       int updatePrice = int.parse(price.text);
-                      bool updateCheckError =await update.updatedData(listOfImages: service.images,price: updatePrice,desc: descriptions,sname: servicesNames,serviceId: service.service_ids);
+                      bool updateCheckError =await update.updatedData(listOfImages: service.images,price: updatePrice,desc: descriptions,sname: servicesNames,serviceId: service.serviceIds!);
                       if(updateCheckError){
                         Get.offAllNamed(Routes.navbarRoots);
                       }else{
@@ -282,7 +282,9 @@ class _UpdateData1State extends State<UpdateData1> {
                     }else{
                       Get.snackbar("Error", "Please Fill The Data",snackPosition: SnackPosition.BOTTOM,backgroundColor: appColor);
                     }
-                  })
+                  }),
+                  2.h.addHSpace(),
+
                 ],
               ),
             ),

@@ -87,7 +87,6 @@ class RegisterDetailsController extends GetxController{
   Future<void> loadCategoryList() async {
     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection("servicesInfo").get();
 
-    print(snapshot.docs.length);
     try {
       for (QueryDocumentSnapshot<Map<String, dynamic>> document
       in snapshot.docs) {
@@ -287,7 +286,6 @@ class RegisterDetailsController extends GetxController{
         password: password,
       );
 
-      print('Account created: ${userCredential.user!.uid}');
 
     }on FirebaseAuthException catch (e){
       if (e.code == 'weak-password') {

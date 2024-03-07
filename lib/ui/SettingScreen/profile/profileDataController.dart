@@ -46,7 +46,6 @@ class ProfileDataController extends GetxController{
       }
     } catch(e){
       return [];
-      print(e.toString());
     }
   }
 
@@ -69,7 +68,6 @@ class ProfileDataController extends GetxController{
     String userUid =_authService.user.value!.uid;
 
     if(userUid.isNotEmpty){
-      print(userUid);
       if(imageFile.value == null){
           img = servicesData.Images;
         }else{
@@ -97,7 +95,6 @@ class ProfileDataController extends GetxController{
     File file = imageFile!.value!;
     await ref.putFile(file);
     downloadUrl = await ref.getDownloadURL();
-    print(downloadUrl);
     return downloadUrl;
   }
 }

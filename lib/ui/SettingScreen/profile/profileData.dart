@@ -269,7 +269,7 @@ class _ProfileDataState extends State<ProfileData> {
                                 String Contact = updateController.contact.text.toString();
                                 String contactopp = updateController.contactOpp.text.toString();
                                 String address = updateController.address.text.toString();
-                                ServicesData _servicesdata = ServicesData(fname: fName, lname: lName, Images: imageInternet, email: emails, contectnumber: Contact, contectNumber2: contactopp, address: address,status: servicesData[0].status,useraadharcard: servicesData[0].useraadharcard,password: servicesData[0].password,services: servicesData[0].services,Uid: servicesData[0].Uid);
+                                ServicesData _servicesdata = ServicesData(fname: fName, lname: lName, Images: imageInternet, email: emails, contectnumber: Contact, contectNumber2: contactopp, address: address,useraadharcard: servicesData[0].useraadharcard,password: servicesData[0].password,services: servicesData[0].services,Uid: servicesData[0].Uid);
                                 bool check =await  updateController.updateDatainFirebase(_servicesdata);
                                 if(check){
                                   Get.back();

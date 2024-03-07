@@ -483,3 +483,29 @@ extension OpenSans on String {
     );
   }
 }
+
+
+Widget roundCornurButton(
+    {double? height,
+      double? width,
+      Color? color,
+      BorderRadiusGeometry? radiusGeometry,
+      void Function()? onTap,
+      String? text,
+      Color? textColor}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      height: height ?? 7.h,
+      width: width ?? 100.w,
+      decoration: BoxDecoration(
+        color: color ?? appColor,
+        borderRadius: radiusGeometry ?? BorderRadius.circular(70),
+      ),
+      child: Center(
+          child:
+          (text ?? "").semiOpenSans(fontSize: 11.sp, fontColor: textColor)),
+    ),
+  );
+}
+

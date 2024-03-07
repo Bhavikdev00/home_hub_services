@@ -2,14 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:home_hub_services/ModelClasses/service.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
+import 'package:home_hub_services/ui/notification_services/notification_service.dart';
 
+import '../../ModelClasses/servicesProvider.dart';
 import '../../getstorage/StorageClass.dart';
 
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final collection = FirebaseFirestore.instance.collection("service_providers");
   final StorageService _storageService = StorageService();
   Rx<User?> user = Rx<User?>(null);
   String? get userId => user.value?.uid;
@@ -29,7 +33,7 @@ class LoginController extends GetxController {
     super.onInit();
     user.bindStream(_auth.authStateChanges());
   }
-  var isPasswordVisible = false.obs;
+  var isPasswordVisible = true.obs;
 
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
@@ -47,6 +51,15 @@ class LoginController extends GetxController {
         // Get.offAllNamed(Routes.homeScreen);
         _storageService.loginStatusCheck(true);
         isLoading(false);
+        NotificationService _notification = NotificationService();
+        String tocken =await _notification.getFCMToken();
+        if(userCredential != null){
+           DocumentReference documentReference =  collection.doc(userCredential.user!.uid);
+           DocumentSnapshot snapshot = await documentReference.get();
+           ServicesData serviceResponseModel = ServicesData.formMap(snapshot.data() as Map<String,dynamic>);
+           serviceResponseModel.fcmToken = tocken;
+           documentReference.set(serviceResponseModel.tomap());
+        }
         return userCredential;
       }
       else{
@@ -97,10 +110,8 @@ class LoginController extends GetxController {
         );
         return e.code;
       }
-      print('Login failed: $e');
     } catch (e) {
       // Catch other exceptions
-      print('Login failed: $e');
       Get.snackbar(
         backgroundColor: appColor,
         colorText: Colors.white,

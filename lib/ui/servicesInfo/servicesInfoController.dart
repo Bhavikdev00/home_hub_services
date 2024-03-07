@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:home_hub_services/ui/servicesInfo/review.dart';
-
-import 'orderScreen.dart';
 
 class ServiceInfoController extends GetxController{
+  int selectedPosterImageIndex = 0;
+
   int buttonindex = 0;
   List<String> items = [
     "Order",
@@ -17,11 +16,6 @@ class ServiceInfoController extends GetxController{
     "assets/images/svg/review.svg"
   ];
 
-
-  List<Widget> check = [
-    OrderScreen(),
-    Review(),
-  ];
   int current = 0;
   PageController pageController = PageController(initialPage: 0);
 
@@ -29,6 +23,9 @@ class ServiceInfoController extends GetxController{
     buttonindex = index;
     update();
   }
-
+  void setSelectedPosterImageIndex({required int value}) {
+    selectedPosterImageIndex = value;
+    update();
+  }
 
 }

@@ -26,7 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controllers.loadUserData();
   }
   @override
   Widget build(BuildContext context) {
@@ -47,24 +46,41 @@ class _SettingScreenState extends State<SettingScreen> {
               SizedBox(
                 height: 30,
               ),
-              Obx(() => _controllers.isLoading.value ? LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h): ListTile(
-                title: Text(_controllers.servicesData.value!.fname,style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 25,
-                ),),
-                leading: SizedBox(
-                  height: 60,
-                  width: 60,
-                  child: ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: _controllers.servicesData.value!.Images,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                subtitle: Text(_controllers.servicesData.value!.services!),
-              )),
-
+              Obx(() {
+                if (_controllers.isLoading.value) {
+                  return LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h);
+                } else {
+                  final servicesData = _controllers.servicesData.value;
+                  if (servicesData != null) {
+                    return ListTile(
+                      title: Text(
+                        servicesData.fname ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 25,
+                        ),
+                      ),
+                      leading: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) {
+                              return LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h);
+                            },
+                            imageUrl: servicesData.Images ?? '',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      subtitle: Text(servicesData.services ?? ''),
+                    );
+                  } else {
+                    // Return a placeholder or alternative widget if servicesData is null
+                    return SizedBox();
+                  }
+                }
+              }),
               Divider(
                 height: 50,
               ),
