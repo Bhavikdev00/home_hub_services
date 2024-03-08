@@ -7,6 +7,7 @@ class StorageService{
   static String loginStatus = "LoginStatus";
   static String userId = "Userid";
   static String mcfToken = "fcmToken";
+  static String nameMe = "Name";
   factory StorageService() {
     return _instance;
   }
@@ -51,5 +52,14 @@ class StorageService{
   }
   String getFcmtoken(){
     return _storage.read(mcfToken) ?? "";
+  }
+
+
+  UpdateUserName(String name) async {
+    await _storage.write(nameMe, name);
+  }
+
+  String getName(){
+    return _storage.read(nameMe) ?? "";
   }
 }

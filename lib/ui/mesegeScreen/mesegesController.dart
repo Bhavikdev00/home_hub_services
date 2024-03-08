@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,37 +18,61 @@ class MessegeController extends GetxController{
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    loadData();
+    getData();
   }
-  RxBool IsLoading = false.obs;
-  RxList<chatRoom> chatRooms = <chatRoom>[].obs;
+  RxBool isLoading = true.obs;
+  RxList<chatRoom> chatrooms = <chatRoom>[].obs;
   RxList<UserData> userDatas = <UserData>[].obs;
-  Future<void> loadData() async {
-    IsLoading.value = true;
+  StreamSubscription<QuerySnapshot>? _subscription;
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  // void GetData(){
+  //   isLoading.value = true;
+  //   String userid = _storageService.getUserid();
+  //   CollectionReference chatRoomCollection = firestore.collection("chatRoom");
+  //   Stream<QuerySnapshot> chatRoomData = chatRoomCollection.where("secondUid", isEqualTo: userid).snapshots();
+  //   chatrooms.clear();
+  //   userDatas.clear();
+  //   chatRoomData.listen((event) async {
+  //     chatrooms.clear();
+  //     userDatas.clear();
+  //     for(var element in event.docs){
+  //       chatRoom chatRooms = chatRoom.fromJson(element.data() as Map<String, dynamic>);
+  //       chatrooms.add(chatRooms);
+  //       UserData userData = await getUserData(UserId: chatRooms.firstUid);
+  //       userDatas.add(userData);
+  //       isLoading.value = false;
+  //       update();
+  //     }
+  //     update();
+  //     print(chatrooms.length);
+  //     print(userDatas.length);
+  //   });
+  //
+  // }
+
+  Future<void> getData() async {
+    isLoading.value = true;
     String userid = _storageService.getUserid();
     CollectionReference chatRoomCollection = FirebaseFirestore.instance.collection("chatRoom");
-    try{
-      QuerySnapshot querySnapshot = await chatRoomCollection.where("secondUid",isEqualTo: userid).get();
-      chatRooms.clear();
-      chatRoom chat = chatRoom(docId: "", LastChat: DateTime.now(), firstUid: "", secondUid: "");
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-         chat=chatRoom.fromJson(doc.data()! as Map<String, dynamic>);
-        chatRooms.add(chat);
-      }
-      CollectionReference userdata = FirebaseFirestore.instance.collection("User");
-      QuerySnapshot querySnapshot1 = await userdata.where("uId",isEqualTo: chat.firstUid).get();
-      for(QueryDocumentSnapshot doc in querySnapshot1.docs){
-        UserData data =UserData.fromJson(doc.data()! as Map<String, dynamic>);
-        userDatas.add(data);
-      }
-      IsLoading.value = false;
-    }catch(e){
-      IsLoading.value =  false;
-      print(e.toString());
-    }finally{
-      IsLoading.value = false;
+    QuerySnapshot chatRoomData = await chatRoomCollection.where("secondUid", isEqualTo: userid).get();
 
+    chatrooms.clear();
+    userDatas.clear();
+
+    for (var element in chatRoomData.docs) {
+      chatRoom chatRooms = chatRoom.fromJson(element.data() as Map<String, dynamic>);
+      chatrooms.add(chatRooms);
+      UserData userData = await getUserData(UserId: chatRooms.firstUid);
+      userDatas.add(userData);
     }
+
+    isLoading.value = false;
+    update();
+
+    print(chatrooms.length);
+    print(userDatas.length);
   }
 
   void select(BuildContext context)async{
@@ -57,6 +83,8 @@ class MessegeController extends GetxController{
         initialDate: selectedDate.value);
     if (picked != null && picked != selectedDate){
       selectedDate.value = picked;
+
+
     }
     update();
   }
@@ -94,6 +122,17 @@ class MessegeController extends GetxController{
   void cleanDateTime() {
     selectedDate.value = DateTime.now();
   }
+
+  getUserData({required String UserId}) async {
+    CollectionReference serviceProviderUserCollection = firestore.collection("User");
+    QuerySnapshot userData = await serviceProviderUserCollection.where("uId",isEqualTo: UserId).get();
+    if(userData.docs.isNotEmpty){
+      return UserData.fromJson(userData.docs.first.data() as Map<String, dynamic>);
+    }else{
+      return [];
+    }
+  }
+
 
   // Future<void> getUSerData(chatRoom chatRoom) async {
   //   DocumentSnapshot  documentReference =await FirebaseFirestore.instance.collection("User").doc(chatRoom.firstUid).get();

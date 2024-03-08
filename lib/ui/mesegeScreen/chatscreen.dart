@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_clippers/custom_clippers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:home_hub_services/ModelClasses/messeges.dart';
+import 'package:home_hub_services/ModelClasses/user.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -13,28 +15,26 @@ import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
 import '../../getstorage/StorageClass.dart';
+import '../notification_services/notification_service.dart';
 import 'mesegesController.dart';
 
 class ChatScreen extends StatefulWidget {
   chatRoom chatroom;
-
-  ChatScreen(this.chatroom);
+  UserData userData;
+  ChatScreen(this.chatroom,this.userData);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loadData();
   }
-
+  ScrollController scrollController = ScrollController();
   RxList<String> selectedCategory = <String>[].obs;
   MessegeController _messegeController = Get.put(MessegeController());
   final StorageService _storageService = StorageService();
@@ -60,7 +60,11 @@ class _ChatScreenState extends State<ChatScreen> {
           .doc(widget.chatroom.docId)
           .collection('messages')
           .add(messege);
+
+      String name = _storageService.getName();
+      NotificationService.sendMessage(msg: "${datasend.text.toString().trim()}",title: "$name",receiverFcmToken: widget.userData.fcmToken);
       datasend.clear();
+
     } else {
       print("Enter Sum Text");
     }
@@ -93,13 +97,13 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage("assets/images/doctor1.jpg"),
+                  backgroundImage: NetworkImage(widget.userData.profileImage),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.01),
                   child: Text(
-                    "Dr.Doctor Name",
+                    "${widget.userData.firstName} ${widget.userData.lastName}",
                     style: TextStyle(color: Colors.white, fontSize: 17),
                   ),
                 ),
@@ -166,6 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 } else {
                   return ListView.builder(
+                    controller: scrollController,
                       itemCount: snapshot.data!.docs.length,
                       padding: EdgeInsets.only(
                           top: 20, left: 15, right: 15, bottom: 80),
@@ -223,6 +228,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: IconButton(
                     onPressed: () async {
                       sendMesseges();
+                      scrollController.animateTo(scrollController.position.maxScrollExtent, duration: 300.milliseconds, curve: Curves.bounceInOut);
                     },
                     icon: Icon(Icons.send),
                     color: Colors.blue,
@@ -296,41 +302,51 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     } else {
-      return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: maps['sendBy'] == _storageService.getUserid()
-              ? EdgeInsets.only(top: 20, left: 80)
-              : EdgeInsets.only(right: 80),
+      return maps['sendBy'] == _storageService.getUserid() ? Container(
+        alignment: Alignment.centerRight,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10, left: 80),
           child: ClipPath(
-            clipper: maps['sendBy'] == _storageService.getUserid()
-                ? UpperNipMessageClipper(MessageType.send)
-                : UpperNipMessageClipper(MessageType.receive),
+            clipper: LowerNipMessageClipper(MessageType.send),
             child: Container(
-              padding: maps['sendBy'] == _storageService.getUserid()
-                  ? EdgeInsets.only(left: 20, top: 15, bottom: 15, right: 20)
-                  : EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: maps['sendBy'] == _storageService.getUserid()
-                    ? Color(0xFFE1E1E2)
-                    : Colors
-                        .blue, // Color for sent messages and received messages can be different
-              ),
-              alignment: maps['sendBy'] == _storageService.getUserid()
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
+              padding:
+              EdgeInsets.only(left: 5.w, top: 10, bottom: 25, right: 5.w),
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    Color(0xff9b56ff),
+                    Color(0xff7413ff),
+                  ])),
               child: Text(
-                "${maps["msg"]}",
+                maps["msg"],
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 13.5.sp,
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
         ),
-      ],
-    );
+      ) : Container(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 80, top: 10),
+          child: ClipPath(
+            clipper: UpperNipMessageClipper(MessageType.receive),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE1E1E2),
+              ),
+              child: Text(
+                maps["msg"],
+                style: TextStyle(
+                  fontSize: 13.5.sp,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
     }
   }
 

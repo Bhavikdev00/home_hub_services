@@ -15,7 +15,7 @@ class HomeScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // NotificationService.sendMessage(msg: "Hello",title: "Balaji",receiverFcmToken: "dId5yUQWTFeE0Hs5Djn-rY:APA91bFA-LHfupFhrA8XwZk7rGJc3F48GIZJ6Pjju_9aAZPp0zd4NRMm2zxfGr6CUs1spPkREy0KiJsqzcWTuKzCVga56v74WVQT7Wwu4MnhU4AzJHJDFI6-Kp7KMx5GQYrGeh3AA4wk");
+    //
     loadUserData();
   }
 
@@ -55,6 +55,10 @@ class HomeScreenController extends GetxController {
       DocumentReference<Map<String, dynamic>> userRef = FirebaseFirestore.instance.collection('service_providers').doc(uid);
       DocumentSnapshot<Map<String, dynamic>> snapshot = await userRef.get();
       if (snapshot.exists) {
+        String fname = snapshot.data()?['fname'];
+        String lname = snapshot.data()?['lname'];
+        String FullName = fname + " " + lname;
+        _storageService.UpdateUserName(FullName);
         userData.value = ServicesData.formMap(snapshot.data()!);
         print("Success");
       } else {
