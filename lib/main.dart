@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:home_hub_services/ui/mesegeScreen/mesegesController.dart';
 import 'package:home_hub_services/ui/notification_services/notification_service.dart';
 import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:sizer/sizer.dart';

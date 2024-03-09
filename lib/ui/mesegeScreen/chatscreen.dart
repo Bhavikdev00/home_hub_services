@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_clippers/custom_clippers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -95,13 +96,32 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: EdgeInsets.only(top: 8),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(widget.userData.profileImage),
+                Container(
+                  height: 50,
+                  width: 50, // Adjusted width to make it a perfect circle
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, // Changed to BoxShape.circle
+                  ),
+                  child: ClipOval(
+                    child: widget.userData.profileImage.isEmpty
+                        ? Image.asset(
+                      "assets/images/profile_image.jpg",
+                      fit: BoxFit.cover,
+                    )
+                        : CachedNetworkImage(
+                      placeholder: (context, url) {
+                        return LoadingAnimationWidget.hexagonDots(
+                            color: appColor, size: 3.h);
+                      },
+                      fit: BoxFit.cover,
+                      imageUrl: widget.userData.profileImage,
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.01),
+                    left: MediaQuery.of(context).size.width * 0.01,
+                  ),
                   child: Text(
                     "${widget.userData.firstName} ${widget.userData.lastName}",
                     style: TextStyle(color: Colors.white, fontSize: 17),
@@ -110,7 +130,8 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
-          actions: [
+
+            actions: [
             Padding(
               padding: EdgeInsets.only(top: 8, right: 20),
               child: Icon(
