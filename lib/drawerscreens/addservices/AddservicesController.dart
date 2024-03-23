@@ -67,7 +67,7 @@ class AddServicesController extends GetxController {
       for (QueryDocumentSnapshot<Map<String, dynamic>> document
           in snapshot.docs) {
         // Change "fieldName" to the actual field name you want to extract
-        String fieldValue = document['ServicesName'];
+        String fieldValue = document['ServiceName'];
         // Add the field value to the list
         if (fieldValue != null) {
           selectServices.add(fieldValue);
@@ -172,6 +172,7 @@ class AddServicesController extends GetxController {
         averageRating: 0.0,
         totalRating: 0,
         userId: userId,
+        savedBy: [],
         serviceIds: '');
 
     final collesction =

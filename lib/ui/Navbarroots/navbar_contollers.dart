@@ -14,7 +14,7 @@ class NavbarController extends GetxController{
     // Mesege Screen
     MessageScreen(),
     //Scedule Screen
-    ScheduleScreen(),
+    OrderHistory(),
     //seting Screen
     SettingScreen(),
   ].obs;

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ui/notification_services/notification_service.dart';
 import 'package:home_hub_services/utils/app_routes.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sizer/sizer.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -26,6 +27,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await GetStorage.init();
   NotificationService().getFCMToken();
+  await Permission.notification.request();
   FirebaseMessaging.onBackgroundMessage(
       NotificationService.firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
@@ -90,5 +92,4 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-
 }

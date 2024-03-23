@@ -26,7 +26,7 @@ class SplashScreenController extends GetxController {
     Future.delayed(const Duration(seconds: 3)).then(
       (value) async {
         if(_storageService.getLoginStatus()){
-          Get.offAllNamed(Routes.navbarRoots);
+          Get.offAllNamed(Routes.checkBiometric);
         }else if(_storageService.getRegisterStatus()){
           Get.offAllNamed(Routes.loginScreen);
         }else{

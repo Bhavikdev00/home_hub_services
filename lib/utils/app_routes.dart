@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:home_hub_services/check%20Biometric/check_biomatric.dart';
 import 'package:home_hub_services/drawerscreens/addservices/Addservices.dart';
 import 'package:home_hub_services/ui/Forgetpassword/otpvarify.dart';
 import 'package:home_hub_services/ui/HomeScreen/Homescreen.dart';
@@ -9,14 +10,14 @@ import 'package:home_hub_services/ui/Register/RegisterDetails.dart';
 import 'package:home_hub_services/ui/Register/register.dart';
 import 'package:home_hub_services/ui/SettingScreen/updatepassword/update_password.dart';
 import 'package:home_hub_services/ui/containercode/newordercode.dart';
+import 'package:home_hub_services/ui/reviewScreen/reviewScreen.dart';
 import 'package:home_hub_services/ui/servicesInfo/servicesInfo.dart';
 
 import '../ui/Forgetpassword/resetpassword.dart';
 import '../ui/Register/otpcheck.dart';
 import '../ui/SplashScreen/splash_screen.dart';
 
-
-class Routes{
+class Routes {
   static String splashScreen = "/";
   static String loginScreen = "/login";
   static String registerScreen = "/register";
@@ -30,21 +31,67 @@ class Routes{
   static String addServices = '/addServices';
   static String servicesInfo = '/ServicesInfo';
   static String orderHistory = '/orderHistory';
+  static String checkBiometric = '/checkBiometric';
+
   static String updatePasseword = '/UpdatePassword';
+  static String review = "/reviews";
+
   static final getPages = [
     GetPage(name: splashScreen, page: () => SplashScreen()),
-    GetPage(name: loginScreen, page: () => Login(),),
-    GetPage(name: registerScreen, page: () => Register(),),
-    GetPage(name: registerDetails, page:() => RegisterDetails(),),
-    GetPage(name: forgetPassword, page: () => ForgetPassword(),),
-    GetPage(name: otpCheck, page: () => OtpCheck(),),
-    GetPage(name: homeScreen, page: () => HomeScreen(),),
-    GetPage(name: otpInForgetPassword, page:() => OtpVarify()),
-    GetPage(name: password, page: () => ResetPassword(),),
-    GetPage(name: navbarRoots, page: () => NavBarRoot(),),
+    GetPage(
+      name: loginScreen,
+      page: () => Login(),
+    ),
+    GetPage(
+      name: registerScreen,
+      page: () => Register(),
+    ),
+    GetPage(
+      name: registerDetails,
+      page: () => RegisterDetails(),
+    ),
+    GetPage(
+      name: forgetPassword,
+      page: () => ForgetPassword(),
+    ),
+    GetPage(
+      name: otpCheck,
+      page: () => OtpCheck(),
+    ),
+    GetPage(
+      name: homeScreen,
+      page: () => HomeScreen(),
+    ),
+    GetPage(name: otpInForgetPassword, page: () => OtpVarify()),
+    GetPage(
+      name: password,
+      page: () => ResetPassword(),
+    ),
+    GetPage(
+      name: navbarRoots,
+      page: () => NavBarRoot(),
+    ),
     GetPage(name: addServices, page: () => AddServices()),
-    GetPage(name: servicesInfo, page: () => ServicesInfo(),),
-    GetPage(name: orderHistory, page: () => OrderHistory(),),
-    GetPage(name: updatePasseword, page: () => UpdatePassword(),)
+    GetPage(
+      name: servicesInfo,
+      page: () => ServicesInfo(),
+    ),
+    GetPage(
+      name: orderHistory,
+      page: () => OrderHistory(),
+    ),
+    GetPage(
+      name: updatePasseword,
+      page: () => updatePassword(),
+    ),
+    GetPage(
+      name: review,
+      page: () => ReviewScreen(),
+    ),
+    GetPage(
+      name: checkBiometric,
+      page: () => CheckBiometric(),
+    ),
+
   ];
 }

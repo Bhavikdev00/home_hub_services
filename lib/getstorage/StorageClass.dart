@@ -8,6 +8,7 @@ class StorageService{
   static String userId = "Userid";
   static String mcfToken = "fcmToken";
   static String nameMe = "Name";
+  static String otpStore = 'otp';
   factory StorageService() {
     return _instance;
   }
@@ -62,4 +63,15 @@ class StorageService{
   String getName(){
     return _storage.read(nameMe) ?? "";
   }
+
+
+
+  updateOtp(String otp) async {
+    await _storage.write(otpStore, otp);
+  }
+
+  String getOtp(){
+    return _storage.read(otpStore) ?? "";
+  }
+
 }

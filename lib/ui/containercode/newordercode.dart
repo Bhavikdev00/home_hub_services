@@ -1,167 +1,126 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
 
-class OrderHistory extends StatefulWidget {
-   OrderHistory({super.key});
+import '../../ModelClasses/OrderResModel.dart';
+import '../../ModelClasses/user.dart';
+import '../../getstorage/StorageClass.dart';
+import 'newordercodecontroller.dart';
+import 'orderDetailsinUser.dart';
 
-  @override
-  State<OrderHistory> createState() => _OrderHistoryState();
-}
+class OrderHistory extends StatelessWidget {
+  final OrderHistoryController controller = Get.put(OrderHistoryController());
 
-class _OrderHistoryState extends State<OrderHistory> {
-   double topBarOpacity = 0.0;
-   DateTime selectedDate = DateTime.now();
-   void _selectedDate(BuildContext context,DateTime date)async{
-     final DateTime? picked = await showDatePicker(
-         context: context,
-         firstDate: DateTime(2015, 8),
-         lastDate: DateTime(2101),
-     initialDate: selectedDate);
-     if (picked != null && picked != selectedDate)
-       setState(() {
-         selectedDate = picked;
-       });
-   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              expandedHeight: 20,
-              floating: true,
-              flexibleSpace: PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(
-                            'Order List',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16 + 6 - 6 * topBarOpacity,
-                              letterSpacing: 1.2,
-                              color: Color(0xFF17262A),
-                            ),
+        child: GetBuilder<OrderHistoryController>(
+          builder: (controller) {
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  expandedHeight: 20,
+                  floating: true,
+                  flexibleSpace: PreferredSize(
+                    preferredSize: Size.fromHeight(kToolbarHeight),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                            child: Text("Order List",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 38,
-                        width: 38,
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(32.0),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              selectedDate = selectedDate.subtract(Duration(days: 1));
-                            });
-                          },
-                          child: Center(
-                            child: Icon(
-                              Icons.keyboard_arrow_left,
-                              color: Color(0xFF3A5160),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 8,
-                          right: 8,
-                        ),
-                        child: GestureDetector(
-                          onTap: () => _selectedDate(context, selectedDate),
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Icon(
-                                  Icons.calendar_today,
-                                  color: Color(0xFF3A5160),
-                                  size: 18,
-                                ),
-                              ),
-                              Text(
-                                '${DateFormat('d MMMM').format(selectedDate)}',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: "Roboto",
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 18,
-                                  letterSpacing: -0.2,
-                                  color: Color(0xFF17262A),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 38,
-                        width: 38,
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(32.0),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              selectedDate = selectedDate.add(Duration(days: 1));
-                            });
-                          },
-                          child: Center(
-                            child: Icon(
-                              Icons.keyboard_arrow_right,
-                              color: Color(0xFF3A5160),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                        IconButton(
+                            iconSize: 30,
+                            onPressed: () {
+                              controller.dateFunction(context);
+                        }, icon: Icon(Icons.filter_alt_outlined)),
+                        2.w.addWSpace(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-        
-        
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: ListTile(
-                      trailing: IconButton(
-                        onPressed: () {
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                      if (controller.isFilter.value) {
+                        return Column(
+                          children: [
+                            controller.filterData.isNotEmpty
+                                ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: ListTile(
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    Get.to(OrderDetailsScreen(controller.userData[index],controller.filterData[index]));
+                                  },
+                                  icon: Icon(Icons.navigate_next_rounded),
+                                ),
+                                title: Text(
+                                    "${controller.userData[index].firstName} ${controller.userData[index].lastName}"),
+                                subtitle: Text(
+                                    "${controller.filterData[index].completeDate!.day}/${controller.filterData[index].completeDate!.month}/${controller.filterData[index].completeDate!.year}"),
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.grey,
+                                  // Add a background color for the avatar
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    controller.userData[index].profileImage,
+                                  ),
+                                ),
+                              ),
+                            )
+                                : Text("No User Order",style: TextStyle(fontSize: 20,),),
+                            ElevatedButton(
+                              onPressed: () {
+                                controller.updateFilter(false);
+                              },
+                              child: Text("Clear All"),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            trailing: IconButton(
+                              onPressed: () {
+                                Get.to(OrderDetailsScreen(controller.userData[index],controller.orderData[index]));
+                              },
+                              icon: Icon(Icons.navigate_next_rounded),
+                            ),
+                            title: Text(
+                                "${controller.userData[index].firstName} ${controller.userData[index].lastName}"),
+                            subtitle: Text(
+                                "${controller.orderData[index].completeDate!.day}/${controller.orderData[index].completeDate!.month}/${controller.orderData[index].completeDate!.year}"),
+                            leading: CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey,
+                              // Add a background color for the avatar
+                              backgroundImage: CachedNetworkImageProvider(
+                                controller.userData[index].profileImage,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    childCount: controller.userData.length,
+                  ),
+                )
 
-                        },
-                        icon: Icon(Icons.navigate_next_rounded),
-                      ),
-                      title: Text("user${index}"),
-                      subtitle: Text("DateTime And Paid And Unpaid"),
-                      leading: CircleAvatar(
-                        radius: 30,
-                      ),
-                    ),
-                  );
-                },
-                childCount: 20,
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );

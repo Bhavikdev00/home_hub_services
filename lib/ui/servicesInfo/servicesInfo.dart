@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -139,8 +140,10 @@ class ServicesInfo extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            "${getdata.serviceName}".boldOpenSans(
-                                fontColor: blackColor, fontSize: 20.sp),
+                            Flexible(
+                              child: "${getdata.serviceName}".boldOpenSans(
+                                  fontColor: blackColor, fontSize: 20.sp,textOverflow: TextOverflow.ellipsis,),
+                            ),
                             IconButton(
                               onPressed: () {},
                               icon: SvgPicture.asset(

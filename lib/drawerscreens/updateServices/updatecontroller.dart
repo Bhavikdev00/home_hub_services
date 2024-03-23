@@ -73,7 +73,7 @@ class UpdateController extends GetxController {
     }
     for (QueryDocumentSnapshot<Map<String, dynamic>> document
         in snapshot.docs) {
-      String fieldValue = document['ServicesName'];
+      String fieldValue = document['ServiceName'];
 
       if (fieldValue != null) {
         selectServices.add(fieldValue);
@@ -87,20 +87,24 @@ class UpdateController extends GetxController {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('Services-Provider(Provider)');
 
-    if (category_data.value != null) {
+    if (category_data.value != null && services_data.value != null) {
       // Ensure 'CategoryName' is the correct field name in your Firestore documents
+      print(userid.value);
+      print(category_data.value);
+      print(services_data.value);
       query = query
           .where("category_name", isEqualTo: category_data.value)
         .where("service_name", isEqualTo: services_data.value)
         .where("userId",isEqualTo: userid.value);
+      var check = await query.get();
+      for (var element in check.docs) {
+        services.add(ServiceResponseModel.fromMap(element.data()));
+      }
+      LoadingServices.value = false;
+      return services;
+    }else{
+      return [];
     }
-
-    var check = await query.get();
-    for (var element in check.docs) {
-      services.add(ServiceResponseModel.fromMap(element.data()));
-    }
-    LoadingServices.value = false;
-    return services;
   }
 
   updateImages(ImageSource source) async {

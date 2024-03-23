@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
@@ -20,12 +21,23 @@ import 'package:sizer/sizer.dart';
 import '../../drawerscreens/addservices/Addservices.dart';
 import '../containercode/newordercode.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
-  HomeScreenController _homeScreenController = Get.put(HomeScreenController());
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  HomeScreenController _homeScreenController = Get.put(HomeScreenController());
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkNetwork();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,7 +205,7 @@ class HomeScreen extends StatelessWidget {
                               chartColor: Colors.red,
                               chartValue: "-5%",
                               title: "Order",
-                              value: "10"),
+                              value: "${_homeScreenController.order.length}"),
                         ),
                       ],
                     ).paddingSymmetric(vertical: 15),
@@ -223,7 +235,7 @@ class HomeScreen extends StatelessWidget {
                                       CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "201",
+                                          "${_homeScreenController.order.length}",
                                           style: TextStyle(
                                               fontSize: 25,
                                               fontWeight: FontWeight.bold,
@@ -291,7 +303,7 @@ class HomeScreen extends StatelessWidget {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "201",
+                                        "${_homeScreenController.pendings.length}",
                                         style: TextStyle(
                                             fontSize: 23,
                                             fontWeight: FontWeight.bold,
@@ -431,7 +443,7 @@ class HomeScreen extends StatelessWidget {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "201",
+                                        "${_homeScreenController.order.length}",
                                         style: TextStyle(
                                             fontSize: 23,
                                             color: Colors.white),
@@ -526,12 +538,12 @@ class HomeScreen extends StatelessWidget {
                                 45.0/180
                               ])
                               ..addTranslate([
-                                Offset(-370.0, -40.0),
+                                Offset(-500.0, -40.0),
                                 Offset(0.0, 0.0),
-                                Offset(370.0, -40.0)
+                                Offset(500.0, -40.0)
                               ]),
                             itemWidth: 360,
-                            itemHeight: 280.0,
+                            itemHeight: 34.h,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
@@ -540,7 +552,7 @@ class HomeScreen extends StatelessWidget {
                                 child: Builder(
                                   builder: (BuildContext context) {
                                     return Container(
-                                      height: 170,
+                                      height: 180,
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20), // Adjust the radius here
@@ -603,5 +615,48 @@ class HomeScreen extends StatelessWidget {
     } else {
       // Handle other platforms if needed
     }
+  }
+
+  void checkNetwork()async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if(connectivityResult == ConnectivityResult.mobile){
+      print("Access");
+    }else if(connectivityResult == ConnectivityResult.wifi){
+      print("Access with wifi");
+    }else{
+      showNetworkErrorDialog();
+    }
+  }
+
+  void showNetworkErrorDialog() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to dismiss dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Network Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('No internet connection.'),
+                Text('Please check your network settings and try again.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                if (Platform.isAndroid || Platform.isIOS) {
+                  exit(0); // Exit app on mobile platforms
+                } else {
+                  // Handle other platforms if needed
+                } // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -14,8 +14,9 @@ class ServiceResponseModel {
   String? serviceIds;
   final String userName;
   final String userId;
-
+  List? savedBy;
   ServiceResponseModel({
+    required this.savedBy,
     required this.createdAt,
     required this.averageRating,
     required this.images,
@@ -30,8 +31,10 @@ class ServiceResponseModel {
     required this.userId,
   });
 
+
   factory ServiceResponseModel.fromMap(Map<String, dynamic> map) {
     return ServiceResponseModel(
+      savedBy: List<String>.from(map['sendBy'] ?? []),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       averageRating: map['average_rating'].toDouble(),
       images: List<String>.from(map['images']),
@@ -49,6 +52,7 @@ class ServiceResponseModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'savedBy' : savedBy,
       'createdAt': Timestamp.fromDate(createdAt),
       'average_rating': averageRating,
       'images': images,

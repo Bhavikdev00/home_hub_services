@@ -10,7 +10,7 @@ class chatRoom{
   factory chatRoom.fromJson(Map<String, dynamic> json) {
     return chatRoom(
       docId : json["roomId"],
-      LastChat: (json['LastChat'] as Timestamp).toDate(),
+      LastChat: (json['LastChatTime'] as Timestamp).toDate(),
       firstUid: json['firstUid'],
       secondUid: json['secondUid'],
     );

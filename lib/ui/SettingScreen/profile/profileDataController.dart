@@ -27,18 +27,17 @@ class ProfileDataController extends GetxController{
     super.onInit();
     loadUserData();
   }
-
-  Future<List<ServicesData>> loadUserData() async{
+  Future<List<ServicesData>> loadUserData() async {
     List<ServicesData> data = [];
     User? user = FirebaseAuth.instance.currentUser;
     CollectionReference collectionReference = FirebaseFirestore.instance.collection("service_providers");
     QuerySnapshot querySnapshot = await collectionReference.where("Uid",isEqualTo: user!.uid).get();
     try{
       if(querySnapshot.docs.isNotEmpty){
-        querySnapshot.docs.forEach((element) {
-          Map<String, dynamic> datas = element.data() as Map<String, dynamic>;
-          data.add(ServicesData.formMap(datas));
-        });
+          querySnapshot.docs.forEach((element) {
+            Map<String, dynamic> datas = element.data() as Map<String, dynamic>;
+            data.add(ServicesData.formMap(datas));
+          });
         return data;
       }else{
         print("Data Error");

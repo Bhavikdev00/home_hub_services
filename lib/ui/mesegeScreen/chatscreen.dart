@@ -1,19 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_clippers/custom_clippers.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:home_hub_services/ModelClasses/messeges.dart';
 import 'package:home_hub_services/ModelClasses/user.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
-
+import '../../ModelClasses/service.dart';
 import '../../constraint/app_color.dart';
 import '../../getstorage/StorageClass.dart';
 import '../notification_services/notification_service.dart';
@@ -36,46 +36,54 @@ class _ChatScreenState extends State<ChatScreen> {
     loadData();
   }
   ScrollController scrollController = ScrollController();
-  RxList<String> selectedCategory = <String>[].obs;
+  RxList<ServiceResponseModel> servsiceData = <ServiceResponseModel>[].obs;
   MessegeController _messegeController = Get.put(MessegeController());
   final StorageService _storageService = StorageService();
   final datasend = TextEditingController();
 
-  bool _showPicker = false;
   final description = TextEditingController();
   DateTime date = DateTime.now();
 
   final price = TextEditingController();
   final _globel = GlobalKey<FormState>();
   void sendMesseges() async {
-    if (datasend.text.trim().toString().isNotEmpty) {
-      //
-      Map<String, dynamic> messege = {
-        "sendBy": _storageService.getUserid(),
-        "msg": datasend.text.toString().trim(),
-        "msgType": "text",
-        "createdAt": DateTime.now(),
-      };
-      await FirebaseFirestore.instance
-          .collection('chatRoom')
-          .doc(widget.chatroom.docId)
-          .collection('messages')
-          .add(messege);
+    try {
+      if (datasend.text.trim().isNotEmpty && widget.chatroom.docId != null && widget.userData.fcmToken != null) {
+        Map<String, dynamic> messege = {
+          "sendBy": _storageService.getUserid(),
+          "msg": datasend.text.toString().trim(),
+          "msgType": "text",
+          "createdAt": DateTime.now(),
+        };
+        await FirebaseFirestore.instance
+            .collection('chatRoom')
+            .doc(widget.chatroom.docId!)
+            .collection('messages')
+            .add(messege);
 
-      String name = _storageService.getName();
-      NotificationService.sendMessage(msg: "${datasend.text.toString().trim()}",title: "$name",receiverFcmToken: widget.userData.fcmToken);
-      datasend.clear();
-
-    } else {
-      print("Enter Sum Text");
+        String name = _storageService.getName();
+        NotificationService.sendMessage(
+          msg: "${datasend.text.toString().trim()}",
+          title: "$name",
+          receiverFcmToken: widget.userData.fcmToken!,
+        );
+        datasend.clear();
+      } else {
+        print("Enter some text or invalid chat room or user data");
+      }
+    } catch (e) {
+      print("Error sending message: $e");
     }
   }
   Future<void> loadData() async {
     String uid = _storageService.getUserid();
+    print("User id ${uid}");
     CollectionReference servicesCollection = FirebaseFirestore.instance.collection('Services-Provider(Provider)');
-    QuerySnapshot datas = await servicesCollection.where("userId",isEqualTo: uid).get();
-    datas.docs.forEach((doc) {
-      selectedCategory.add(doc["service_name"]);
+    QuerySnapshot datas = await servicesCollection.where("userId", isEqualTo: uid).get();
+    datas.docs.forEach((doc) async {
+      ServiceResponseModel serviceResponseModel = ServiceResponseModel.fromMap(doc.data() as Map<String, dynamic>);
+      // Store the document with the model data
+      servsiceData.add(serviceResponseModel);
     });
   }
 
@@ -221,7 +229,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   padding: EdgeInsets.only(left: 8),
                   child: IconButton(
                       onPressed: () async {
-                        await showModelSheet(context);
+                         await showModelSheet(context);
                       },
                       icon: Icon(
                         Icons.add,
@@ -264,10 +272,13 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget messeges(Map maps) {
-    Timestamp timestamp = maps["createdAt"];
-    DateTime createdAt = timestamp.toDate();
-    String hourMinute = DateFormat('HH:mm').format(createdAt);
     if (maps["msgType"] == "offers") {
+      Timestamp timestamps = maps["daysToWork"];
+      print(timestamps);
+      DateTime dateTime = timestamps.toDate();
+      final day = dateTime.day;
+      final month = dateTime.month;
+      final year = dateTime.year;
       return Padding(
         padding:  maps["sendBy"] == _storageService.getUserid()  ?  EdgeInsets.only(left: 80,top: 20) : EdgeInsets.only(top: 20,right: 80),
         child: Container(
@@ -295,14 +306,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Icon(Icons.timer),
                     2.w.addWSpace(),
-                    Text("Time : ${maps["daysToWork"]} delivery"),
+                    Text("Completed At : ${day}-${month}-${year}"),
                   ],
                 ),
                 0.6.h.addHSpace(),
                 Row(
                   children: [
                     Icon(Icons.sync),
-                    Text("Services : ${maps["service_name"]}"),
+                    Text(" Services : ${maps["service_name"]}"),
                   ],
                 ),
                 1.h.addHSpace(),
@@ -312,8 +323,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // Adjust radius as needed
                   ),
-                  child: Center(child: const  Text("Offer expired")),
-                  onPressed: () {
+                  child: Center(child: const  Text("Offer expired",style: TextStyle(color: Colors.white),)),
+                  onPressed: () async {
+                    // print(maps[""]);
+                    String MesegeId = maps["messageId"];
+
+                     await _messegeController.deletedOffer(MesegeId);
 
                 },),
                 1.h.addHSpace(),
@@ -373,7 +388,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   showModelSheet(BuildContext context) async {
     final focusNode = FocusNode();
-
     return Get.bottomSheet(
       SingleChildScrollView(
         child: Padding(
@@ -461,10 +475,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           onChanged: (String? newValue) {
                             setSelectedService(newValue);
                           },
-                          items: selectedCategory.map((String service) {
+                          items: servsiceData.map((ServiceResponseModel services) {
                             return DropdownMenuItem<String>(
-                              value: service,
-                              child: Text(service),
+                              value: services.serviceIds,
+                              child: Text(services.serviceName),
                             );
                           }).toList(),
                         ),
@@ -565,7 +579,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     appButton( text: "Send Offers" , onTap: () async {
                       if(_globel.currentState!.validate()){
                         print("Call");
-                        bool checkCondition =await _messegeController.sendTheOffers(date,price.text.toString().trim(),description.text.toString().trim(),widget.chatroom.docId,category_data.value!);
+                        String? servicesName = getServicesName(category_data.value);
+                        bool checkCondition =await _messegeController.sendTheOffers(date,price.text.toString().trim(),description.text.toString().trim(),widget.chatroom.docId,category_data.value!,widget.userData.fcmToken!,servicesName!);
                         if(checkCondition){
                           price.text = "";
                           description.text = "";
@@ -586,5 +601,14 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  String? getServicesName(String? id) {
+      for(var data in servsiceData){
+        if(data.serviceIds == id){
+          return data.serviceName;
+        }
+      }
+      return null;
   }
 }

@@ -57,7 +57,7 @@ class DeleteServicesController extends GetxController {
     CollectionReference servicesCollection =
         FirebaseFirestore.instance.collection('Services-Provider(Provider)');
     try {
-      QuerySnapshot querySnapshot = await servicesCollection.get();
+      QuerySnapshot querySnapshot = await servicesCollection.where("userId",isEqualTo: userid.value).get();
       querySnapshot.docs.forEach((doc) {
         selectedCategory.add(doc["service_name"]);
       });
@@ -67,7 +67,7 @@ class DeleteServicesController extends GetxController {
     for (QueryDocumentSnapshot<Map<String, dynamic>> document
         in snapshot.docs) {
       // Change "fieldName" to the actual field name you want to extract
-      String fieldValue = document['ServicesName'];
+      String fieldValue = document['ServiceName'];
 
       if (fieldValue != null) {
         selectServices.add(fieldValue);

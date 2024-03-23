@@ -26,7 +26,6 @@ class SettingsControllers extends GetxController {
    try{
      isLoading.value = true;
      String? uid = _auth.currentUser!.uid;
-     // print(_auth?.uid);
       FirebaseFirestore
          .instance
          .collection('service_providers')

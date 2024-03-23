@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 
@@ -326,6 +328,8 @@ Widget appButton(
       Color? color,
       String? text,
       double? fontSize,
+      Color? bordorColor,
+      double? borderRadius,
       Color? fontColor}) {
   return GestureDetector(
     onTap: onTap,
@@ -333,9 +337,11 @@ Widget appButton(
       height: height ?? 6.5.h,
       width: width ?? 90.w,
       decoration: BoxDecoration(
-          color: color ?? appColor, borderRadius: BorderRadius.circular(50)),
+          border: Border.all(color: bordorColor ?? Colors.transparent),
+          color: color ?? appColor,
+          borderRadius: BorderRadius.circular(borderRadius ?? 50)),
       child: Center(
-          child: (text ?? "").semiBoldReadex(
+          child: (text ?? "").semiOpenSans(
               fontColor: fontColor ?? whiteColor, fontSize: fontSize ?? 14.sp)),
     ),
   );
@@ -423,16 +429,17 @@ extension OpenSans on String {
     );
   }
 
-  Widget semiOpenSans({
-    Color? fontColor,
-    double? fontSize,
-    TextDecoration? textDecoration,
-    TextOverflow? textOverflow,
-    TextAlign? textAlign,
-  }) {
+  Widget semiOpenSans(
+      {Color? fontColor,
+        double? fontSize,
+        TextDecoration? textDecoration,
+        TextOverflow? textOverflow,
+        TextAlign? textAlign,
+        int? maxLines}) {
     return Text(
       this,
       overflow: textOverflow,
+      maxLines: maxLines ?? 1,
       style: TextStyle(
           color: fontColor ?? appColor,
           fontSize: fontSize ?? 16,
@@ -442,8 +449,8 @@ extension OpenSans on String {
       textAlign: textAlign,
     );
   }
-
   Widget boldOpenSans({
+    int? line,
     Color? fontColor,
     double? fontSize,
     TextDecoration? textDecoration,
@@ -451,6 +458,7 @@ extension OpenSans on String {
     TextAlign? textAlign,
   }) {
     return Text(
+      maxLines: line ?? 1,
       this,
       overflow: textOverflow,
       style: TextStyle(
@@ -508,4 +516,8 @@ Widget roundCornurButton(
     ),
   );
 }
+void showMessege({String? title, String? messege}) {
+  Get.snackbar(title ?? "", messege ?? "", backgroundColor: lightPurple);
+}
+
 

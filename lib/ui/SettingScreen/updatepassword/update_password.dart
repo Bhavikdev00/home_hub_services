@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -7,10 +5,9 @@ import 'package:home_hub_services/ModelClasses/servicesProvider.dart';
 import 'package:home_hub_services/ui/SettingScreen/updatepassword/update_password_controller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../constraint/app_color.dart';
 
-class UpdatePassword extends StatelessWidget {
+class updatePassword  extends StatelessWidget {
   UpdatePasswordController updatePasswordController = Get.put(UpdatePasswordController());
   var myDataObject = Get.arguments as ServicesData;
   @override
@@ -18,7 +15,13 @@ class UpdatePassword extends StatelessWidget {
     String passwords = myDataObject.password!;
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_sharp),
+
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text('Change Password'),
       ),
       body: Padding(

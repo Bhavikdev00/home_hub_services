@@ -1,32 +1,33 @@
+
+import 'package:app_settings/app_settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ui/SettingScreen/profile/profileData.dart';
 import 'package:home_hub_services/ui/SettingScreen/settingScreenControlls.dart';
-import 'package:home_hub_services/utils/extension.dart';
+import 'package:home_hub_services/utils/app_routes.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import '../../constraint/app_color.dart';
 
 class SettingScreen extends StatefulWidget {
-   SettingScreen({super.key});
+  SettingScreen({super.key});
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-    SettingsControllers _controllers = Get.put(SettingsControllers());
+  SettingsControllers _controllers = Get.put(SettingsControllers());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +49,8 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               Obx(() {
                 if (_controllers.isLoading.value) {
-                  return LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h);
+                  return LoadingAnimationWidget.hexagonDots(
+                      color: appColor, size: 5.h);
                 } else {
                   final servicesData = _controllers.servicesData.value;
                   if (servicesData != null) {
@@ -66,7 +68,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         child: ClipOval(
                           child: CachedNetworkImage(
                             placeholder: (context, url) {
-                              return LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h);
+                              return LoadingAnimationWidget.hexagonDots(
+                                  color: appColor, size: 5.h);
                             },
                             imageUrl: servicesData.Images ?? '',
                             fit: BoxFit.cover,
@@ -113,23 +116,23 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () async {
-                  await _launchUrl();
-                  },
+                onTap: ()  {
+                  Get.toNamed(Routes.review);
+                },
                 leading: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
                     color: Colors.deepPurple,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.feedback,
                     color: Colors.blue,
                     size: 35,
                   ),
                 ),
-                title: Text(
-                  "Feedback",
+                title: const Text(
+                  "Review",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 20,
@@ -141,7 +144,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(Routes.updatePasseword,
+                      arguments: _controllers.servicesData.value);
+                },
                 leading: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -167,8 +173,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () {
-                },
+                onTap: _openNotificationSettings,
                 leading: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -182,7 +187,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ),
                 title: Text(
-                  "General",
+                  "Notification",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 20,
@@ -194,7 +199,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               ListTile(
-                onTap: () {},
+                onTap: () async {
+                  await _launchUrl();
+                  //
+                },
                 leading: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -219,7 +227,6 @@ class _SettingScreenState extends State<SettingScreen> {
               Divider(
                 height: 40,
               ),
-
               ListTile(
                 onTap: () async {
                   await _controllers.signOut();
@@ -252,17 +259,22 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-    // Future<void> launchUrl(String urlString) async {
-    //   if (await launchUrl(urlString)) { // Check if the URL can be launched
-    //     await launch(urlString);
-    //   } else {
-    //     throw 'Could not launch $urlString'; // throw could be used to handle erroneous situations
-    //   }
-    // }
-    Future<void> _launchUrl() async {
-      final Uri _url = Uri.parse('https://flutter.dev');
-      if (!await launchUrl(_url)) {
-        throw Exception('Could not launch $_url');
-      }
+  // Future<void> launchUrl(String urlString) async {
+  //   if (await launchUrl(urlString)) { // Check if the URL can be launched
+  //     await launch(urlString);
+  //   } else {
+  //     throw 'Could not launch $urlString'; // throw could be used to handle erroneous situations
+  //   }
+  // }
+  Future<void> _launchUrl() async {
+    final Uri _url = Uri.parse('https://help.fiverr.com/hc/en-us/');
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
     }
+  }
+
+
+  void _openNotificationSettings() {
+    AppSettings.openAppSettings();
+  }
 }

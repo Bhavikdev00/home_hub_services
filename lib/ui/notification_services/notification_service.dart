@@ -90,13 +90,13 @@ class NotificationService {
     String? receiverFcmToken,
     String? msg,
     String? title,
+    Map? Data,
   }) async {
     var serverKey =
         'AAAAwC0qATY:APA91bEZEi7emQUNGXXSkGRqMfnd-hspactqORS6huARMRU4FQbFH_bWwcPop4Dxt3uLLpdZ51uD7wrLh2zlt6peYPewGgYOnyI3NvibHnrnpOBEn-fJLRoVk2dObeI_tOzefsivJD-G';
     try {
       // for (String token in receiverFcmToken) {
       log("RESPONSE TOKEN  $receiverFcmToken");
-
       http.Response response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
@@ -110,6 +110,7 @@ class NotificationService {
               'title': title ?? '',
               'bodyLocKey': 'true'
             },
+            'Data' : Data,
             'priority': 'high',
             'to': receiverFcmToken,
           },

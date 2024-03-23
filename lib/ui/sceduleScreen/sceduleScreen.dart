@@ -1,142 +1,587 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:home_hub_services/ui/sceduleScreen/seduleScreenController.dart';
+import 'package:home_hub_services/utils/extension.dart';
+import 'package:sizer/sizer.dart';
 
-import 'UpcomingSehedule.dart';
+import '../../constraint/app_color.dart';
+import 'otpconform/otpvarifytoConform.dart';
 
-class ScheduleScreen extends StatefulWidget {
-  const ScheduleScreen({super.key});
+class OrderHistory extends StatefulWidget {
+  const OrderHistory({super.key});
 
   @override
-  State<ScheduleScreen> createState() => _ScheduleScreenState();
+  State<OrderHistory> createState() => _OrderHistoryState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
-  int buttonindex = 0;
-  final _seduleWigits = [
-    //UpcomingSedule
-    Today(),
-    Center(
-      child: Text("Completed"),
-    ),
-    Center(
-      child: Text("Canceled"),
-    ),
-  ];
+class _OrderHistoryState extends State<OrderHistory> {
+  SeduleScreen serviceProviderMenagementController = Get.put(SeduleScreen());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(top: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SafeArea(
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: Icon(Icons.accessibility_new_outlined),
+            title:  Text("Sedule Screen"),
+            bottom: PreferredSize(
+              preferredSize: Size(100.w, 5.h),
+              child: TabBar(
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Tab(
+                    text: "Pending",
+                  ),
+                  Tab(
+                    text: "Accepted",
+                  ),
+                  Tab(
+                    text: "Rejected",
+                  ),
+                ],
+              ),
+            ),
+          ),
+          body: TabBarView(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Text(
-                  "Schedule",
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                padding: EdgeInsets.all(5),
-                margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02),
-                decoration: BoxDecoration(
-                  color: Color(0xFFF4F6FA),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          buttonindex = 0;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: MediaQuery.of(context).size.height * 0.015,
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                        decoration: BoxDecoration(
-                          color: buttonindex == 0 ? Color(0xFF7165D6) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
-                          child: Text(
-                            "Today",
-                            style: TextStyle(
-                              color: buttonindex == 0 ? Colors.white : Colors.black38,
-                              fontSize: MediaQuery.of(context).size.width * 0.04,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          buttonindex = 1;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                          vertical: MediaQuery.of(context).size.height * 0.015,
-                        ),
-                        decoration: BoxDecoration(
-                          color: buttonindex == 1 ? Color(0xFF7165D6) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "Completed",
-                          style: TextStyle(
-                            color: buttonindex == 1 ? Colors.white : Colors.black38,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          buttonindex = 2;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                          vertical: MediaQuery.of(context).size.height * 0.015,
-                        ),
-                        decoration: BoxDecoration(
-                          color: buttonindex == 2 ? Color(0xFF7165D6) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "Canceled",
-                          style: TextStyle(
-                            color: buttonindex == 2 ? Colors.white : Colors.black38,
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _seduleWigits[buttonindex],
+              todayScreen(),
+              penddingScreen(),
+              rejected()
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget todayScreen() {
+    return GetBuilder<SeduleScreen>(builder: (controller) {
+      return controller.load ? Center(
+        child: CircularProgressIndicator(),
+
+      ) : controller.pending.isEmpty ? Center(
+        child: "No Pending Data"
+            .semiOpenSans(fontColor: Colors.black, fontSize: 12.sp),
+      ):ListView.builder(
+        padding: EdgeInsets.all(0),
+        physics: BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: controller.pending.length,
+        itemBuilder: (context, index) {
+          DateTime? date = controller.pending[index].completeDate;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          spreadRadius: 2,
+                        )
+                      ]),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            "${controller.userdatas[index].firstName} ${controller.userdatas[index].lastName}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text("${controller.pending[index].servicesName}"),
+                          trailing: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: CachedNetworkImageProvider(controller.userdatas[index].profileImage),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Divider(
+                            thickness: 1,
+                            height: 20,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.black54,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "${date!.day.toString()}-${date!.month.toString()}-${date.year.toString()}",
+                                  style: TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time_filled,
+                                  color: Colors.black54,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "${date.hour}:${date.minute} AM",
+                                  style: TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration:  BoxDecoration(
+                                      color: controller.pending[index].paymentStatus == "Pending" ? Colors.red :Colors.green,
+                                      shape:   BoxShape.circle),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text("${controller.pending[index].paymentStatus}"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                 controller.cancel(controller.pending[index]);
+                              },
+                              child: Container(
+                                width: 150,
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF4F6FA),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Reject",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                               await controller.actupted(controller.pending[index],controller.userdatas[index]);
+                              },
+                              child: Container(
+                                width: 150,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color:  appColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Accepted",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        1.5.h.addHSpace(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },);
+  }
+
+  Widget penddingScreen() {
+    return GetBuilder<SeduleScreen>(
+      builder: (controller) {
+        return controller.completed.isEmpty ?  Center(
+          child: "No Conform Data"
+              .semiOpenSans(fontColor: Colors.black, fontSize: 12.sp),
+        ) : ListView.builder(
+          padding: EdgeInsets.all(0),
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: controller.completed.length,
+          itemBuilder: (context, index) {
+            DateTime? date = controller.completed[index].completeDate;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            spreadRadius: 2,
+                          )
+                        ]),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: Text(
+                              "${controller.userdatas[index].firstName} ${controller.userdatas[index].lastName}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text("${controller.completed[index].servicesName}"),
+                            trailing: CircleAvatar(
+                              radius: 25,
+                              backgroundImage: CachedNetworkImageProvider(controller.userdatas[index].profileImage),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Divider(
+                              thickness: 1,
+                              height: 20,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_month,
+                                    color: Colors.black54,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "${date!.day.toString()}-${date!.month.toString()}-${date.year.toString()}",
+                                    style: TextStyle(color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time_filled,
+                                    color: Colors.black54,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "${date.hour}:${date.minute} AM",
+                                    style: TextStyle(color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration:  BoxDecoration(
+                                        color: controller.completed[index].paymentStatus == "Pending" ? Colors.red :Colors.green,
+                                        shape:   BoxShape.circle),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text("${controller.completed[index].paymentStatus}"),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  await controller.cancel(controller.completed[index]);
+                                },
+                                child: Container(
+                                  width: 150,
+                                  padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF4F6FA),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  print(controller.userdatas[index].email);
+                                  controller.sendotp(controller.userdatas[index].email);
+                                  Get.to(OtpVarification(controller.completed[index],controller.userdatas[index]));
+                                },
+                                child: Container(
+                                  width: 150,
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color:  appColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Completed",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          1.5.h.addHSpace(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+    },);
+  }
+
+  Widget rejected() {
+    return GetBuilder<SeduleScreen>(builder: (controller) {
+      return controller.canceled.isEmpty ? Center(
+        child: "No Reject Data"
+            .semiOpenSans(fontColor: Colors.black, fontSize: 12.sp),
+      ) : ListView.builder(
+        padding: EdgeInsets.all(0),
+        physics: BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: controller.canceled.length,
+        itemBuilder: (context, index) {
+          DateTime? date = controller.canceled[index].completeDate;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          spreadRadius: 2,
+                        )
+                      ]),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            "${controller.userdatas[index].firstName} ${controller.userdatas[index].lastName}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text("${controller.canceled[index].servicesName}"),
+                          trailing: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: CachedNetworkImageProvider(controller.userdatas[index].profileImage),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Divider(
+                            thickness: 1,
+                            height: 20,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_month,
+                                  color: Colors.black54,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "${date!.day.toString()}-${date!.month.toString()}-${date.year.toString()}",
+                                  style: TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time_filled,
+                                  color: Colors.black54,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "${date.hour}:${date.minute} AM",
+                                  style: TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration:  BoxDecoration(
+                                      color: controller.canceled[index].paymentStatus == "Pending" ? Colors.red :Colors.green,
+                                      shape:   BoxShape.circle),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text("${controller.canceled[index].paymentStatus}"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                await controller.deleteOrder(controller.canceled[index].orderId!);
+                              },
+                              child: Container(
+                                width: 150,
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF4F6FA),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Delete",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                await controller.reConform(controller.canceled[index]);
+                              },
+                              child: Container(
+                                width: 150,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color:  appColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Reconfirm",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        1.5.h.addHSpace(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },);
+  }
+
+
 }
