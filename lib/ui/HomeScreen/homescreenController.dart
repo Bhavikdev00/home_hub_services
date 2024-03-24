@@ -22,7 +22,7 @@ class HomeScreenController extends GetxController {
     loadUserData();
     requestNotificationPermission();
   }
-
+RxInt totalAmount = 0.obs;
   RxList<ServicesData> serviceData = <ServicesData>[].obs;
   Rx<User?> user = Rx<User?>(null);
   RxString displayName = ''.obs;
@@ -155,7 +155,8 @@ class HomeScreenController extends GetxController {
       for (var object in orderData.docs) {
         OrderResModel orderResModel =
         OrderResModel.fromJson(object.data() as Map<String, dynamic>);
-        order.add(orderResModel); // Add each order to the list
+        order.add(orderResModel);
+        calculateAmount(orderResModel.amount);// Add each order to the list
       }
       panddingData(order); // Call a method to handle pending data (assuming this method exists)
       // Notify listeners about changes
@@ -164,7 +165,12 @@ class HomeScreenController extends GetxController {
 
   void panddingData(RxList<OrderResModel> order) {
     pendings.value = order.where((check) => check.status == "Pending").toList();
-
   }
+
+  void calculateAmount(int? amount) {
+    totalAmount.value += amount!;
+  }
+
+
 
 }

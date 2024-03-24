@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/messeges.dart';
 import 'package:home_hub_services/ModelClasses/user.dart';
@@ -34,26 +36,26 @@ class MessegeController extends GetxController {
   }
 
   RxBool isLoading = true.obs;
-  RxList<chatRoom> chatrooms = <chatRoom>[].obs;
+  RxList<ChatRoomResModel> chatrooms = <ChatRoomResModel>[].obs;
   RxList<UserData> userDatas = <UserData>[].obs;
   StreamSubscription<QuerySnapshot>? _subscription;
-
+  RxList<String> roomId = <String>[].obs;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> getData() async {
     isLoading.value = true;
     String userid = _storageService.getUserid();
-    CollectionReference chatRoomCollection =
-        FirebaseFirestore.instance.collection("chatRoom");
-    QuerySnapshot chatRoomData =
-        await chatRoomCollection.where("secondUid", isEqualTo: userid).get();
-
+    CollectionReference chatRoomCollection = FirebaseFirestore.instance.collection("chatRoom");
+    QuerySnapshot chatRoomData = await chatRoomCollection.where("secondUid", isEqualTo: userid).get();
+    print(userid);
     chatrooms.clear();
     userDatas.clear();
-
+    roomId.clear();
     for (var element in chatRoomData.docs) {
-      chatRoom chatRooms = chatRoom.fromJson(element.data() as Map<String, dynamic>);
+      roomId.add(element["roomId"]);
+      ChatRoomResModel chatRooms = ChatRoomResModel.fromJson(element.data() as Map<String, dynamic>);
       chatrooms.add(chatRooms);
+      print(chatRooms.firstUid);
       UserData userData = await getUserData(UserId: chatRooms.firstUid);
       userDatas.add(userData);
     }
@@ -137,9 +139,7 @@ class MessegeController extends GetxController {
 
   Future<void> deletedOffer(String mesegeId) async {
      String userid = _storageService.getUserid();
-
-
-    QuerySnapshot roomSnapshot = await FirebaseFirestore.instance
+     QuerySnapshot roomSnapshot = await FirebaseFirestore.instance
         .collection('chatRoom')
         .where("secondUid", isEqualTo: userid)
         .get();

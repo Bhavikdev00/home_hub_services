@@ -96,10 +96,13 @@ class _MessageScreenState extends State<MessageScreen> {
                   shrinkWrap: true,
                   itemCount: chatScreenController.chatrooms.length,
                   itemBuilder: (context, index) {
+
+                    String hour = chatScreenController.chatrooms[index].lastChatTime.hour.toString();
+                    String minits = chatScreenController.chatrooms[index].lastChatTime.minute.toString();
                     return Container(
                       child: ListTile(
                         onTap: () {
-                          Get.to(ChatScreen(chatScreenController.chatrooms[index],chatScreenController.userDatas[index]));
+                          Get.to(ChatScreen(chatScreenController.chatrooms[index],chatScreenController.userDatas[index],chatScreenController.roomId[index]));
                         },
                         leading: Container(
                           height: 90,
@@ -132,14 +135,14 @@ class _MessageScreenState extends State<MessageScreen> {
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        subtitle: const Text(
-                          "Hello, Doctor are you there?",
+                        subtitle:  Text(
+                          "${chatScreenController.chatrooms[index].LastChat}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
-                        trailing: const Text(
-                          "12:30",
+                        trailing: Text(
+                          "${hour} : ${minits}",
                           style:
                           TextStyle(fontSize: 15, color: Colors.black54),
                         ),

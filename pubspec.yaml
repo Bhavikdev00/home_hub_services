@@ -43,6 +43,7 @@ dependencies:
   get: ^4.6.6
   sizer: ^2.0.15
   flutter_svg: ^2.0.9
+  flutter_keyboard_visibility: ^6.0.0
   local_auth: ^2.2.0
   get_storage: ^2.1.1
   connectivity_plus: ^5.0.2

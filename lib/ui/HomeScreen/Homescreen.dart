@@ -20,6 +20,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../drawerscreens/addservices/Addservices.dart';
 import '../containercode/newordercode.dart';
+import '../income/income_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -194,14 +195,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Container(
                           child: ChartContainer(
+                            onTap: () {
+                              Get.to(IncomeScreen(_homeScreenController.order));
+                            },
                               chartColor: Colors.green,
                               chartValue: "+10%",
                               title: "Income",
-                              value: "10,000"),
+                              value: "${_homeScreenController.totalAmount.value}"),
                         ),
                         SizedBox(width: 5.w),
                         Container(
                           child: ChartContainer(
+                            onTap: () {
+
+                            },
                               chartColor: Colors.red,
                               chartValue: "-5%",
                               title: "Order",

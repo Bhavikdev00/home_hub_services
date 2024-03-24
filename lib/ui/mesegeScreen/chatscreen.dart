@@ -20,10 +20,10 @@ import '../notification_services/notification_service.dart';
 import 'mesegesController.dart';
 
 class ChatScreen extends StatefulWidget {
-  chatRoom chatroom;
+  ChatRoomResModel chatroom;
   UserData userData;
-  ChatScreen(this.chatroom,this.userData);
-
+  String roomId;
+  ChatScreen(this.chatroom,this.userData,this.roomId);
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -60,13 +60,17 @@ class _ChatScreenState extends State<ChatScreen> {
             .doc(widget.chatroom.docId!)
             .collection('messages')
             .add(messege);
-
+        DateTime dateTime = DateTime.now();
         String name = _storageService.getName();
         NotificationService.sendMessage(
           msg: "${datasend.text.toString().trim()}",
           title: "$name",
           receiverFcmToken: widget.userData.fcmToken!,
         );
+        CollectionReference chatRoomCollection = FirebaseFirestore.instance.collection("chatRoom");
+        await chatRoomCollection.doc(widget.roomId).update({
+          "LastChatTime": dateTime, "LastChat": datasend.text.toString().trim(), "lastMsgType": "text"
+        });
         datasend.clear();
       } else {
         print("Enter some text or invalid chat room or user data");
