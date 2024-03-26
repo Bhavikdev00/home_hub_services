@@ -3,20 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../ModelClasses/OrderResModel.dart';
-import '../../ModelClasses/user.dart';
-import '../../getstorage/StorageClass.dart';
 import 'newordercodecontroller.dart';
 import 'orderDetailsinUser.dart';
 
 class OrderHistory extends StatelessWidget {
   final OrderHistoryController controller = Get.put(OrderHistoryController());
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +107,7 @@ class OrderHistory extends StatelessWidget {
                         );
                       }
                     },
-                    childCount: controller.userData.length,
+                    childCount: controller.isFilter.value ? controller.filterData.length : controller.userData.length,
                   ),
                 )
 

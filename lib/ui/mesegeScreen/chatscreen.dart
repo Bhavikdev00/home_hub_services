@@ -65,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
         NotificationService.sendMessage(
           msg: "${datasend.text.toString().trim()}",
           title: "$name",
-          receiverFcmToken: widget.userData.fcmToken!,
+          receiverFcmToken: widget.userData.fcmToken,
         );
         CollectionReference chatRoomCollection = FirebaseFirestore.instance.collection("chatRoom");
         await chatRoomCollection.doc(widget.roomId).update({
@@ -276,9 +276,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget messeges(Map maps) {
+
     if (maps["msgType"] == "offers") {
+      print(maps["status"]);
       Timestamp timestamps = maps["daysToWork"];
-      print(timestamps);
       DateTime dateTime = timestamps.toDate();
       final day = dateTime.day;
       final month = dateTime.month;
@@ -323,17 +324,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 1.h.addHSpace(),
                 1.w.appDivider(),
                 MaterialButton(
-                  color: appColor,
+                  color: maps["status"] == "Confirmed" ? Colors.grey : appColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // Adjust radius as needed
                   ),
-                  child: Center(child: const  Text("Offer expired",style: TextStyle(color: Colors.white),)),
+                  child: Center(child:   Text(  maps["status"] == "Confirmed" ? "Offer Accepted" : "Offer expired",style: TextStyle(color: Colors.white),)),
                   onPressed: () async {
                     // print(maps[""]);
                     String MesegeId = maps["messageId"];
-
                      await _messegeController.deletedOffer(MesegeId);
-
                 },),
                 1.h.addHSpace(),
               ],

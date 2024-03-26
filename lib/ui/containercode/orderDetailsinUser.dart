@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -7,12 +8,18 @@ import 'package:home_hub_services/ModelClasses/user.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:sizer/sizer.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+
+class OrderDetailsScreen extends StatefulWidget {
 
   UserData userData;
-  OrderResModel filterData;
-  OrderDetailsScreen(this.userData,this.filterData);
+  OrderResModel orderData;
+  OrderDetailsScreen(this.userData,this.orderData);
 
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,12 +39,12 @@ class OrderDetailsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(100),
                       child: CachedNetworkImage(
                           fit: BoxFit.cover,
-                          imageUrl: userData.profileImage ?? "")),
+                          imageUrl: widget.userData.profileImage ?? "")),
                 ),
               ),
               2.h.addHSpace(),
               Center(
-                child: "${userData.firstName} ${userData.lastName}"
+                child: "${widget.userData.firstName} ${widget.userData.lastName}"
                     .boldOpenSans(fontSize: 13.sp, fontColor: Colors.black),
               ),
               5.h.addHSpace(),
@@ -50,7 +57,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       3.w.addWSpace(),
                       "Email : "
                           .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
-                      "${userData.email}"
+                      "${widget.userData.email}"
                           .semiOpenSans(fontSize: 12.sp, fontColor: Colors.black),
                     ],
                   ),
@@ -65,7 +72,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     children: [
                       3.w.addWSpace(),
                       "Contact : ".boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
-                      "${userData.phoneNumber}".semiOpenSans(fontSize: 12.sp, fontColor: Colors.black),
+                      "${widget.userData.phoneNumber}".semiOpenSans(fontSize: 12.sp, fontColor: Colors.black),
                     ],
                   ),
                 ),
@@ -81,7 +88,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       "Address :  "
                           .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
                       Expanded(
-                        child: "${userData.address}".semiOpenSans(
+                        child: "${widget.userData.address}".semiOpenSans(
                             fontSize: 12.sp,
                             maxLines: 2,
                             textOverflow: TextOverflow.ellipsis,
@@ -101,7 +108,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       3.w.addWSpace(),
                       "Service :  "
                           .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
-                      "${filterData.servicesName}".semiOpenSans(
+                      "${widget.orderData.servicesName}".semiOpenSans(
                           fontSize: 12.sp,
                           textOverflow: TextOverflow.ellipsis,
                           fontColor: Colors.black),
@@ -120,7 +127,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       "Payment Status :  "
                           .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
                       Expanded(
-                        child: "${filterData.paymentStatus}".semiOpenSans(
+                        child: "${widget.orderData.paymentStatus}".semiOpenSans(
                             fontSize: 12.sp,
                             maxLines: 2,
                             textOverflow: TextOverflow.ellipsis,
@@ -131,63 +138,50 @@ class OrderDetailsScreen extends StatelessWidget {
                 ),
               ),
               2.h.addHSpace(),
-              filterData.status == "Pending" ?  Row(
+
+              Card(
+                child: Container(
+                  width: 100.w,
+                  height: 7.5.h,
+                  child: Row(
+                    children: [
+                      3.w.addWSpace(),
+                      "Work Status :  "
+                          .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
+                      Expanded(
+                        child: "${widget.orderData.status}".semiOpenSans(
+                            fontSize: 12.sp,
+                            maxLines: 2,
+                            textOverflow: TextOverflow.ellipsis,
+                            fontColor: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              2.h.addHSpace(),
+              Row(
                 children: [
-                  Expanded(
-                      child: appButton(
-                          onTap: () {
-
-                          },
-                          bordorColor: Colors.red,
-                          color: Colors.transparent,
-                          text: "Delete Order History",
-                          borderRadius: 12,
-                          fontSize: 12.sp,
-                          fontColor: Colors.red)),
-                  2.w.addWSpace(),
-                  Expanded(
-                      child: appButton(
-                          onTap: () {
-                                  
-                          },
-                          text: "Back",
-                          color: Colors.green,
-                          fontSize: 12.sp,
-                          borderRadius: 12,
-                          fontColor: Colors.white))
-                ],
-              ) : Row(
-                children: [
-                  Expanded(
-                      child: appButton(
-                          onTap: () {
-
-                          },
-                          bordorColor: Colors.red,
-                          color: Colors.transparent,
-                          text: "Order Complete",
-                          borderRadius: 12,
-                          fontSize: 12.sp,
-                          fontColor: Colors.red)),
-                  2.w.addWSpace(),
-                  Expanded(
-                      child: appButton(
-                          onTap: () {
-
-                          },
-                          text: "Delete",
-                          color: Colors.green,
-                          fontSize: 12.sp,
-                          borderRadius: 12,
-                          fontColor: Colors.white))
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Expanded(
+                        child: appButton(
+                            onTap: () {
+                              Get.back();
+                            },
+                            text: "Back",
+                            color: Colors.green,
+                            fontSize: 12.sp,
+                            borderRadius: 12,
+                            fontColor: Colors.white)),
+                  )
                 ],
               ),
-              1.5.h.addHSpace(),
-              2.h.addHSpace(),
               const Spacer(),
             ],
           ).paddingSymmetric(horizontal: 2.w),
         ),
     );
   }
+
 }

@@ -188,21 +188,26 @@ class OtpVarificationConntroller extends GetxController{
 
 
   Future<void> comp(OrderResModel order, UserData userdata) async {
-    String name = _storageService.getName();
+   try{
+     String name = _storageService.getName();
 
-    order.status = "Completed";
-    await FirebaseFirestore.instance.collection("Orders").doc(order.orderId).update(order.toJson());
-    NotificationService.sendMessage(
-      msg: "Services Completed",
-      title: "$name",
-      receiverFcmToken: userdata.fcmToken,
-      Data: {
-        "ServiceId" : order.serviceProviderId,
-        "ServiceName" : order.servicesName,
-        "click_action" : "ratting",
-        "subServiceId" :order.subServiceId,
-      },
-    );
+     order.status = "Completed";
+     await FirebaseFirestore.instance.collection("Orders").doc(order.orderId).update(order.toJson());
+     NotificationService.sendMessage(
+       msg: "Services Completed",
+       title: "$name",
+       receiverFcmToken: userdata.fcmToken,
+       Data: {
+         "ServiceId" : order.serviceProviderId,
+         "ServiceName" : order.servicesName,
+         "click_action" : "ratting",
+         "subServiceId" :order.subServiceId,
+       },
+     );
+   }catch(e){
+     print('${e.toString()}');
+
+   }
   }
 
 

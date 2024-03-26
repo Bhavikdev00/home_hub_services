@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:home_hub_services/ui/sceduleScreen/seduleScreenController.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
@@ -49,7 +50,7 @@ class _OrderHistoryState extends State<OrderHistory> {
           body: TabBarView(
             children: [
               todayScreen(),
-              penddingScreen(),
+              ConformScreen(),
               rejected()
             ],
           ),
@@ -234,7 +235,7 @@ class _OrderHistoryState extends State<OrderHistory> {
     },);
   }
 
-  Widget penddingScreen() {
+  Widget ConformScreen() {
     return GetBuilder<SeduleScreen>(
       builder: (controller) {
         return controller.completed.isEmpty ?  Center(
@@ -348,19 +349,24 @@ class _OrderHistoryState extends State<OrderHistory> {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  await controller.cancel(controller.completed[index]);
+                                  if(controller.completed[index].status == "Completed"){
+                                    await controller.deleteOrder(controller.completed[index].orderId!);
+                                  }else{
+                                    await controller.cancel(controller.completed[index]);
+                                  }
+
                                 },
                                 child: Container(
                                   width: 150,
                                   padding:
                                   const EdgeInsets.symmetric(vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF4F6FA),
+                                    color: controller.completed[index].status ==  "Completed" ? Colors.red : Color(0xFFF4F6FA),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Center(
+                                  child:  Center(
                                     child: Text(
-                                      "Cancel",
+                                      controller.completed[index].status == "Completed" ? "Deleted" : "Reject",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -370,6 +376,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   ),
                                 ),
                               ),
+
                               InkWell(
                                 onTap: () async {
                                   print(controller.userdatas[index].email);
@@ -380,12 +387,12 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   width: 150,
                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                   decoration: BoxDecoration(
-                                    color:  appColor,
+                                    color: controller.completed[index].status ==  "Completed" ? Colors.grey : appColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Center(
+                                  child:  Center(
                                     child: Text(
-                                      "Completed",
+                                      controller.completed[index].status == "Accepted" ? "Complete" : "Finish",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,

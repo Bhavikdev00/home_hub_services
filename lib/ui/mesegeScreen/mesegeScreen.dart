@@ -1,22 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:home_hub_services/ui/mesegeScreen/mesegesController.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../ModelClasses/messeges.dart';
+import '../../ModelClasses/user.dart';
 import '../../constraint/app_color.dart';
 import 'chatscreen.dart';
+import 'mesegesController.dart'; // Assuming you have your controller in this file
 
-class MessageScreen extends StatefulWidget {
-  MessageScreen({Key? key});
-
-  @override
-  State<MessageScreen> createState() => _MessageScreenState();
-}
-
-class _MessageScreenState extends State<MessageScreen> {
-  MessegeController chatScreenController = Get.put(MessegeController());
+class MessageScreen extends StatelessWidget {
+  final MessegeController chatScreenController = Get.put(MessegeController());
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +56,14 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: TextFormField(
+                          onChanged: (value) {
+                            if (value.length >= 1) {
+                              chatScreenController.getSearchMesseges(searchValue: value);
+                              chatScreenController.setSearchValue(value: true);
+                            } else {
+                              chatScreenController.setSearchValue(value: false);
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: "Search",
                             border: InputBorder.none,
@@ -75,87 +79,175 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 30), // Adjust this spacing as needed
+            SizedBox(height: 30),
             Expanded(
-              child: Obx(
-                    () => chatScreenController.isLoading.value
-                    ? Center(
-                  child: LoadingAnimationWidget.hexagonDots(
-                    color: appColor,
-                    size: 40, // Adjust the size of the loading animation
-                  ),
-                )
-                    : ListView.separated(
-                  padding: EdgeInsets.zero, // Add this line to remove top padding
-                  separatorBuilder: (context, index) {
-                    return Container(
-                      height: 1.h,
-                    );
-                  },
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: chatScreenController.chatrooms.length,
-                  itemBuilder: (context, index) {
-
-                    String hour = chatScreenController.chatrooms[index].lastChatTime.hour.toString();
-                    String minits = chatScreenController.chatrooms[index].lastChatTime.minute.toString();
-                    return Container(
-                      child: ListTile(
-                        onTap: () {
-                          Get.to(ChatScreen(chatScreenController.chatrooms[index],chatScreenController.userDatas[index],chatScreenController.roomId[index]));
-                        },
-                        leading: Container(
-                          height: 90,
-                          width: 55,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: chatScreenController.userDatas[index]
-                                .profileImage ==
-                                ""
-                                ? Image.asset(
-                              "assets/images/profile_image.jpg",
-                              fit: BoxFit.fill,
-                            )
-                                : CachedNetworkImage(
-                              placeholder: (context, url) {
-                                return LoadingAnimationWidget.hexagonDots(
-                                    color: appColor, size: 3.h);
-                              },
-                              fit: BoxFit.fill,
-                              imageUrl: chatScreenController
-                                  .userDatas[index].profileImage,
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          "${chatScreenController.userDatas[index].firstName} ${chatScreenController.userDatas[index].lastName}",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle:  Text(
-                          "${chatScreenController.chatrooms[index].LastChat}",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                        trailing: Text(
-                          "${hour} : ${minits}",
-                          style:
-                          TextStyle(fontSize: 15, color: Colors.black54),
-                        ),
+              child: GetBuilder<MessegeController>(
+                builder:(_) {
+                  List<UserData> user = [];
+                  List<ChatRoomResModel> chatdata = [];
+                  if (_.isSearch.value == true) {
+                    user.clear();
+                    chatdata.clear();
+                    user = _.searchUserData.value;
+                    chatdata = _.searchChatRooms;
+                  } else {
+                    user.clear();
+                    chatdata.clear();
+                    user = _.userDatas;
+                    chatdata = _.chatrooms;
+                  }
+                  if(_.isLoading.value){
+                    return Center(
+                      child: LoadingAnimationWidget.hexagonDots(
+                        color: appColor,
+                        size: 40,
                       ),
                     );
-                  },
-                ),
-              ),
+                  }else {
+                    if(_.isSearch.value){
+                      return user.isEmpty ?  Center(
+                          child: "Opps! No Data Found"
+                              .boldOpenSans(fontColor: Colors.black)) : ListView.separated(
+                        padding: EdgeInsets.zero,
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                              height:
+                              10); // Adjust the spacing between list items
+                        },
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: user.length,
+                        itemBuilder: (context, index) {
+                          String hour = chatdata[index].lastChatTime.hour.toString();
+                          String minits = chatdata[index].lastChatTime.minute.toString();
+                          return   Container(
+                            child: ListTile(
+                              onTap: () {
+                                Get.to(ChatScreen(chatdata[index],
+                                    user[index], _.roomId[index]));
+                              },
+                              leading: Container(
+                                height: 90,
+                                width: 55,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child:user[index].profileImage == ""
+                                      ? Image.asset(
+                                    "assets/images/profile_image.jpg",
+                                    fit: BoxFit.fill,
+                                  )
+                                      : CachedNetworkImage(
+                                    placeholder: (context, url) {
+                                      return LoadingAnimationWidget
+                                          .hexagonDots(
+                                          color: appColor, size: 3.h);
+                                    },
+                                    fit: BoxFit.fill,
+                                    imageUrl:
+                                    _.userDatas[index].profileImage,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                "${user[index].firstName} ${user[index].lastName}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(
+                                "${chatdata[index].LastChat}",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                              trailing: Text(
+                                "$hour : $minits",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.black54),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }else{
+                      return ListView.separated(
+                        padding: EdgeInsets.zero,
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                              height:
+                              10); // Adjust the spacing between list items
+                        },
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _.chatrooms.length,
+                        itemBuilder: (context, index) {
+                          String hour = _.chatrooms[index].lastChatTime.hour.toString();
+                          String minits = _.chatrooms[index].lastChatTime.minute.toString();
+                          return user.isEmpty ? Container(
+                            child: Text("Not a Chat"),
+                          ) :Container(
+                            child: ListTile(
+                              onTap: () {
+                                Get.to(ChatScreen(_.chatrooms[index],
+                                    _.userDatas[index], _.roomId[index]));
+                              },
+                              leading: Container(
+                                height: 90,
+                                width: 55,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: _.userDatas[index].profileImage == ""
+                                      ? Image.asset(
+                                    "assets/images/profile_image.jpg",
+                                    fit: BoxFit.fill,
+                                  )
+                                      : CachedNetworkImage(
+                                    placeholder: (context, url) {
+                                      return LoadingAnimationWidget
+                                          .hexagonDots(
+                                          color: appColor, size: 3.h);
+                                    },
+                                    fit: BoxFit.fill,
+                                    imageUrl:
+                                    _.userDatas[index].profileImage,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                "${_.userDatas[index].firstName} ${_.userDatas[index].lastName}",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(
+                                "${_.chatrooms[index].LastChat}",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                              trailing: Text(
+                                "$hour : $minits",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.black54),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  }
+                },
+            )
             )
           ],
         ),
       ),
     );
-
   }
 }

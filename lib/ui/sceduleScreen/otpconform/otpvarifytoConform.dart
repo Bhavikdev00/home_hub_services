@@ -76,7 +76,8 @@ class _OtpVarificationState extends State<OtpVarification>  {
                       ? () {
                     controller.resendOtp(email: widget.user.email);
                   }
-                      : () {},
+                      : () {
+                  },
                   child: Text(controller.enableResend == true
                       ? "Resend OTP"
                       : "Resend in ${controller.start} seconds"),
@@ -85,12 +86,15 @@ class _OtpVarificationState extends State<OtpVarification>  {
                 controller.otpfilled == true
                     ? appButton(
                     onTap: () async {
+
+
                       String filledOtp = controller.getOtpFromScreen();
                       bool result = await controller.varifyOtp(filledOtp);
                       if (result) {
-                        await controller.comp(widget.order,widget.user);
+                        print("Conform");
                         Get.snackbar("Service", "Completed Thank You");
-                        Get.back();
+                        Navigator.pop(context);
+                        await controller.comp(widget.order,widget.user);
                       }
                     },
                     fontSize: 12.sp,

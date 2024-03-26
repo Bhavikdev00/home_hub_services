@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/messeges.dart';
 import 'package:home_hub_services/ModelClasses/user.dart';
@@ -35,11 +36,16 @@ class MessegeController extends GetxController {
     getData();
   }
 
+  RxBool isSearch = false.obs;
+
   RxBool isLoading = true.obs;
   RxList<ChatRoomResModel> chatrooms = <ChatRoomResModel>[].obs;
   RxList<UserData> userDatas = <UserData>[].obs;
   StreamSubscription<QuerySnapshot>? _subscription;
   RxList<String> roomId = <String>[].obs;
+
+  RxList<ChatRoomResModel> searchChatRooms = <ChatRoomResModel>[].obs;
+  RxList<UserData> searchUserData = <UserData>[].obs;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> getData() async {
@@ -155,4 +161,25 @@ class MessegeController extends GetxController {
        await messageRef.delete();
      }
   }
+
+
+
+
+  getSearchMesseges({required String searchValue}) {
+    searchChatRooms.clear();
+    searchUserData.clear();
+    for(int i=0;i<chatrooms.length;i++){
+      if(userDatas[i].firstName.toLowerCase().contains(searchValue) || userDatas[i].lastName.toLowerCase().contains(searchValue)){
+        searchChatRooms.add(chatrooms[i]);
+        searchUserData.add(userDatas[i]);
+      }
+    }
+  }
+
+  void setSearchValue({required bool value}) {
+    isSearch.value = value;
+    update();
+  }
+
+
 }

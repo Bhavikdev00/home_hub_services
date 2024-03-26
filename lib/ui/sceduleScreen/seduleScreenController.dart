@@ -42,9 +42,11 @@ class SeduleScreen extends GetxController {
         }else if(orderResModel.status == "Accepted"){
             completed.add(orderResModel);
             update();
+        }else if(orderResModel.status == "Completed"){
+          completed.add(orderResModel);
+          update();
         }else{
           canceled.add(orderResModel);
-          update();
         }
       });
       update();
@@ -170,10 +172,10 @@ class SeduleScreen extends GetxController {
 
     try {
       final sendReport = await send(message, smtpServer);
-
       print('Message sent: ${sendReport.toString()}');
       // isLoading(false);
       // store in GetStorage
+      print("Otp Screen $otp");
        await _storageService.updateOtp(otp);
       // await sendOTPTOFirebase(email,otp);
     } on MailerException catch (e) {
