@@ -58,7 +58,7 @@ class MessageScreen extends StatelessWidget {
                         child: TextFormField(
                           onChanged: (value) {
                             if (value.length >= 1) {
-                              chatScreenController.getSearchMesseges(searchValue: value);
+                              chatScreenController.getSearchMesseges(searchValue: value.trim());
                               chatScreenController.setSearchValue(value: true);
                             } else {
                               chatScreenController.setSearchValue(value: false);

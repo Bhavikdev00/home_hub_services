@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/ModelClasses/OrderResModel.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../ModelClasses/user.dart';
 import '../../getstorage/StorageClass.dart';
@@ -9,6 +10,7 @@ class IncomeController extends GetxController{
 
   RxList<OrderResModel> order;
   final StorageService _storageService = StorageService();
+
   IncomeController(this.order);
   RxList<UserData> user = <UserData>[].obs;
   @override
@@ -36,16 +38,46 @@ class IncomeController extends GetxController{
   }
 
 
-  sendMoney(int amount) async {
+  sendMoney(int amount, String upiIndia,int total) async {
     DateTime dateTime = DateTime.now();
     String prividerId = _storageService.getUserid();
-    var time = Timestamp.fromDate(dateTime);
+    var time = Timestamp.fromDate(dateTime);;
     DocumentReference documentReference =await FirebaseFirestore.instance.collection("Payment_request").add({
       "date" : time,
+      "uipIndia" : upiIndia,
       "ProviderId" : prividerId,
       "amountWithdraw" : amount,
       "type" : "withdraw"
     });
 
+  }
+
+
+  Future<bool> withdraw(int amount,String upiId, int totalAmount) async {
+    try{
+
+      String userUid = _storageService.getUserid();
+
+      DateTime dateTime = DateTime.now();
+
+      var time = Timestamp.fromDate(dateTime);;
+
+      int calculate = totalAmount - amount;
+      await FirebaseFirestore.instance.collection("service_providers").doc(userUid).update({
+        "total-payment" : calculate,
+      });
+
+      await FirebaseFirestore.instance.collection("Payment_request").add({
+        "date" : time,
+        "uipIndia" : upiId,
+        "ProviderId" : userUid,
+        "amount" : amount,
+        "type" : "withdraw"
+      });
+      return true;
+    }catch(e){
+      print(e.toString());
+      return false;
+    }
   }
 }

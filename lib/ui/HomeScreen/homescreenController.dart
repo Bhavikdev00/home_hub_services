@@ -68,6 +68,7 @@ RxInt totalAmount = 0.obs;
         String fname = snapshot.data()?['fname'];
         String lname = snapshot.data()?['lname'];
         String FullName = fname + " " + lname;
+        int click = snapshot.data()?['clicks'];
         _storageService.UpdateUserName(FullName);
         userData.value = ServicesData.formMap(snapshot.data()!);
         print("Success");

@@ -12,10 +12,10 @@ import '../../../ModelClasses/user.dart';
 import '../../../getstorage/StorageClass.dart';
 import '../../notification_services/notification_service.dart';
 
-class OtpVarificationConntroller extends GetxController{
+class OtpVarificationConntroller extends GetxController {
   final StorageService _storageService = StorageService();
   List<TextEditingController> otpControllers =
-  List.generate(6, (index) => TextEditingController());
+      List.generate(6, (index) => TextEditingController());
   bool otpfilled = false;
   int start = 30; // Observable for countdown timer
   Timer? _timer;
@@ -35,7 +35,7 @@ class OtpVarificationConntroller extends GetxController{
     _timer?.cancel(); // Cancel any previous timer
     _timer = Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (start == 0) {
           timer.cancel();
           enableResend = true;
@@ -47,7 +47,6 @@ class OtpVarificationConntroller extends GetxController{
       },
     );
   }
-
 
   String getOtpFromScreen() {
     String otp = "";
@@ -75,7 +74,7 @@ class OtpVarificationConntroller extends GetxController{
     String secret = 'asdnasjdnasjdnasjdasdnasjdnajsdndnasdjnasd';
     String otp = OTP
         .generateTOTPCode(secret, DateTime.now().millisecondsSinceEpoch,
-        length: 6)
+            length: 6)
         .toString();
     final smtpServer = gmail('zsp.bhavik@gmail.com', 'iwvu vtof svpj ubfc');
     // Create the email message
@@ -171,7 +170,6 @@ class OtpVarificationConntroller extends GetxController{
     }
   }
 
-
   Future<bool> varifyOtp(String otp) async {
     enableResend = false;
     update();
@@ -185,31 +183,53 @@ class OtpVarificationConntroller extends GetxController{
     }
   }
 
-
-
   Future<void> comp(OrderResModel order, UserData userdata) async {
-   try{
-     String name = _storageService.getName();
-
-     order.status = "Completed";
-     await FirebaseFirestore.instance.collection("Orders").doc(order.orderId).update(order.toJson());
-     NotificationService.sendMessage(
-       msg: "Services Completed",
-       title: "$name",
-       receiverFcmToken: userdata.fcmToken,
-       Data: {
-         "ServiceId" : order.serviceProviderId,
-         "ServiceName" : order.servicesName,
-         "click_action" : "ratting",
-         "subServiceId" :order.subServiceId,
-       },
-     );
-   }catch(e){
-     print('${e.toString()}');
-
-   }
+    try {
+      String name = _storageService.getName();
+      await updateAmount(order.amount);
+      order.status = "Completed";
+      await FirebaseFirestore.instance
+          .collection("Orders")
+          .doc(order.orderId)
+          .update(order.toJson());
+      NotificationService.sendMessage(
+        msg: "Services Completed",
+        title: "$name",
+        receiverFcmToken: userdata.fcmToken,
+        Data: {
+          "ServiceId": order.serviceProviderId,
+          "ServiceName": order.servicesName,
+          "click_action": "ratting",
+          "subServiceId": order.subServiceId,
+        },
+      );
+    } catch (e) {
+      print('${e.toString()}');
+    }
   }
 
-
-
+  Future<void> updateAmount(int? amount) async {
+    String userid = _storageService.getUserid();
+    // Get Data in Firebase Console
+    print("Amount Completed");
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection("service_providers")
+        .doc(userid)
+        .get();
+    int total = 0;
+    if (snapshot.exists) {
+      // Access the specific field you need
+      var datas = snapshot.data() as Map<String,dynamic>;
+      total = datas["total-payment"];
+    } else {
+      print("Document does not exist");
+    }
+    total = total + amount!;
+    await FirebaseFirestore.instance
+        .collection("service_providers")
+        .doc(userid)
+        .update({
+      "total-payment": total,
+    });
+  }
 }

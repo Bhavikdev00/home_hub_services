@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/OrderResModel.dart';
+import 'package:home_hub_services/ModelClasses/servicesProvider.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:sizer/sizer.dart';
@@ -14,8 +16,9 @@ import 'income_screen_controller.dart';
 
 class IncomeScreen extends StatefulWidget {
   final RxList<OrderResModel> order;
+  Rx<ServicesData> userData;
 
-  IncomeScreen(this.order);
+  IncomeScreen(this.order,this.userData);
 
   @override
   State<IncomeScreen> createState() => _IncomeScreenState();
@@ -23,14 +26,16 @@ class IncomeScreen extends StatefulWidget {
 
 class _IncomeScreenState extends State<IncomeScreen> {
   int totalAmount = 0;
-
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
-    calculateAmount();
   }
+
   final number = TextEditingController();
-final globel = GlobalKey<FormState>();
+  final uipId = TextEditingController();
+  final globel = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     IncomeController controller = Get.put(IncomeController(widget.order));
@@ -50,7 +55,7 @@ final globel = GlobalKey<FormState>();
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Total Amount ${totalAmount}",
+              "Total Amount ${widget.userData.value.totalPayment}",
               style: TextStyle(
                 fontSize: 18,
                 color: appColor,
@@ -72,6 +77,9 @@ final globel = GlobalKey<FormState>();
                     itemCount: widget.order.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
+                      String day = widget.order.value[index].completeDate!.day.toString();
+                      String mounth  = widget.order.value[index].completeDate!.month.toString();
+                      String year = widget.order.value[index].completeDate!.year.toString();
                       return Card(
                         child: ListTile(
                           leading: CircleAvatar(
@@ -88,7 +96,7 @@ final globel = GlobalKey<FormState>();
                             ),
                           ),
                           subtitle: Text(
-                            "${widget.order[index].paymentStatus}",
+                            "${day}/${mounth}/${year}",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 12,
@@ -97,16 +105,9 @@ final globel = GlobalKey<FormState>();
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                "Price:",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Icon(
-                                Icons.attach_money,
-                                color: Colors.green,
+                              SvgPicture.asset(
+                                "assets/images/rupes.svg",
+                                height: 20,
                               ),
                               Text(
                                 "${widget.order[index].amount}",
@@ -126,17 +127,17 @@ final globel = GlobalKey<FormState>();
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: MaterialButton(
                     minWidth: double.infinity,
-                    height: 5.h,
+                    height: 6.h,
                     color: appColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     onPressed: () {
                       // Open bottom sheet on button click
-                      openBottomSheet(context,controller);
+                      openBottomSheet(context, controller);
                     },
                     child: Text(
-                      "Withdrawal \$${totalAmount.toString()}",
+                      "Withdrawal",
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
@@ -150,15 +151,6 @@ final globel = GlobalKey<FormState>();
     );
   }
 
-  void calculateAmount() {
-    int total = 0;
-    for (var order in widget.order) {
-      total += order.amount ?? 0;
-    }
-    setState(() {
-      totalAmount = total;
-    });
-  }
 
   Future openBottomSheet(BuildContext context, IncomeController controller) {
     final focusNode = FocusNode();
@@ -166,80 +158,147 @@ final globel = GlobalKey<FormState>();
       Form(
         key: globel,
         child: Container(
-          height: 300,
+          height: 360,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           ),
           width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 5.h, // Specify the height of the IconButton
-                child: IconButton(
-                  onPressed: () {
-                    // Handle IconButton press
-                  },
-                  icon: Icon(Icons.arrow_back),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 5.h, // Specify the height of the IconButton
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Handle IconButton press
+                    },
+                    icon: Icon(Icons.arrow_back),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 13),
-                child: Text(
-                  "Balance :\$${totalAmount}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Balance :",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      SvgPicture.asset(
+                        "assets/images/rupes.svg",
+                        height: 20,
+                      ),
+                      Text(
+                        "${widget.userData.value.totalPayment!}",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              1.h.addHSpace(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 13),
-                child: Text(
-                  "Enter Amount Request:",  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                1.h.addHSpace(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13),
+                  child: Text(
+                    "Enter Amount Request:",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  ),
                 ),
-              ),
-              1.h.addHSpace(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextFormField(
-                  controller: number,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || int.parse(value) > totalAmount) {
-                      return 'Please enter a value less than or equal to the total amount';
-                    }
-                    return null; // Return null if validation passes
-                  },
-                  decoration: InputDecoration(
-                    hintText: "\$100",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+                1.h.addHSpace(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextFormField(
+                    controller: number,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please Enter the Amount";
+                      } else {
+                        try {
+                          int parsedValue = int.parse(value);
+                          if (parsedValue > widget.userData.value.totalPayment!) {
+                            return 'Please enter a value less than or equal to the total amount';
+                          }
+                        } catch (e) {
+                          return 'Please enter a valid number';
+                        }
+                      }
+                      return null; // Return null if validation passes
+                    },
+                    decoration: InputDecoration(
+                      hintText: "\$100",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
-
-              ),
-              1.h.addHSpace(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: MaterialButton(
-                  height: 50,
-                  color: Colors.red,
-                  shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13),
+                  child: Text(
+                    "Enter Uip Id:",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                   ),
-                  minWidth: double.infinity,
-                  child: const Text("Request"),
-                  onPressed: () async {
-                    if(globel.currentState!.validate()){
-                      int amount = int.parse(number.text.trim());
-                       await controller.sendMoney(amount);
-                       number.clear();
-                       Get.back();
-                    }
-                },),
-              )
-            ],
+                ),
+                1.h.addHSpace(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextFormField(
+                    controller: uipId,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter Uip Id Withdraw';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                    decoration: InputDecoration(
+                      hintText: "abc@oksbi.com",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ),
+                1.h.addHSpace(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: MaterialButton(
+                    height: 50,
+                    color: Colors.red,
+                    shape: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    minWidth: double.infinity,
+                    child: const Text("Request"),
+                    onPressed: () async {
+                      if (globel.currentState!.validate()) {
+                        // int amount = int.parse(number.text.trim());
+                        // String upiIndia = uipId.text.toString().trim();
+                        // await controller.sendMoney(amount, upiIndia,totalAmount);
+                        // number.clear();
+                        // uipId.clear();
+                        // Get.back();
+                        int amount = int.parse(number.text.trim());
+                        String upiIndia = uipId.text.toString().trim();
+                        int totalAmount = widget.userData.value.totalPayment!;
+                        bool ischeck = await controller.withdraw(amount,upiIndia,totalAmount);
+                        if(ischeck){
+                          number.clear();
+                          uipId.clear();
+                          Get.back();
+                        }else {
+                          print("No Data Return");
+                        }
+                      }
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -196,12 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           child: ChartContainer(
                             onTap: () {
-                              Get.to(IncomeScreen(_homeScreenController.order));
+                              Get.to(IncomeScreen(_homeScreenController.order,_homeScreenController.userData));
                             },
                               chartColor: Colors.green,
                               chartValue: "+10%",
                               title: "Income",
-                              value: "${_homeScreenController.totalAmount.value}"),
+                              value: "${_homeScreenController.userData.value.totalPayment}"),
                         ),
                         SizedBox(width: 5.w),
                         Container(
@@ -383,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "201",
+                                        "${_homeScreenController.userData.value.clicks}",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 23,

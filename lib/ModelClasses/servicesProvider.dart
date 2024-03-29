@@ -13,10 +13,11 @@ class ServicesData{
   String? password;
   String? useraadharcard;
   String? fcmToken;
-  String? uipId;
   int? clicks;
+  int? totalPayment;
   ServicesData(
       { this.Uid,
+        this.totalPayment,
         this.fcmToken,
         required this.fname,
         required this.lname,
@@ -28,15 +29,16 @@ class ServicesData{
       required this.contectnumber,
       required this.contectNumber2,
       required this.address,
-        this.uipId,
+
        this.services,
          this.useraadharcard,
        this.password});
 
   Map<String, dynamic> tomap() {
     return {
+      "total-payment" : this.totalPayment,
       "clicks" : this.clicks,
-      "upiId" : this.uipId,
+
       "fcmToken" : this.fcmToken,
       "Uid": this.Uid,
       "Images": this.Images,
@@ -56,8 +58,9 @@ class ServicesData{
 
   factory ServicesData.formMap(Map<String, dynamic> map) {
     return ServicesData(
+      totalPayment: map["total-payment"] ?? 0,
       clicks: map["clicks"] ?? 0,
-      uipId: map["upiId"] ?? "",
+
       fcmToken: map["fcmToken"] ?? "",
       useraadharcard: map["useraadharcard"] ?? "",
       Uid: map["Uid"] ?? "",

@@ -86,8 +86,6 @@ class _OtpVarificationState extends State<OtpVarification>  {
                 controller.otpfilled == true
                     ? appButton(
                     onTap: () async {
-
-
                       String filledOtp = controller.getOtpFromScreen();
                       bool result = await controller.varifyOtp(filledOtp);
                       if (result) {

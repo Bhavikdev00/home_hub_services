@@ -4,6 +4,8 @@ import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_rx/get_rx.dart';
@@ -146,28 +148,16 @@ class _ChatScreenState extends State<ChatScreen> {
             actions: [
             Padding(
               padding: EdgeInsets.only(top: 8, right: 20),
-              child: Icon(
-                Icons.call,
-                color: Colors.white,
-                size: 26,
+              child: IconButton(
+                onPressed: () async {
+                  await FlutterPhoneDirectCaller.callNumber(widget.userData.phoneNumber);
+                },
+                icon: Icon( Icons.call,
+                  color: Colors.white,
+                  size: 26,),
+
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 8, right: 15),
-              child: Icon(
-                Icons.video_call,
-                color: Colors.white,
-                size: 26,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8, right: 10),
-              child: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-                size: 26,
-              ),
-            )
           ],
         ),
       ),
@@ -301,9 +291,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 Text("Phone Number And Email"),
                 Row(
                   children: [
-                    Icon(Icons.monetization_on_outlined),
+                    SvgPicture.asset("assets/images/rupes.svg",height: 22,),
                     2.w.addWSpace(),
-                    Text("Price : \$${maps["price"]}"),
+                    Row(
+                      children: [
+                        Text("Price : ${maps["price"]}"),
+                      ],
+                    ),
                   ],
                 ),
                 0.6.h.addHSpace(),

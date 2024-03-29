@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
+import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
 
 class ChartContainer extends StatefulWidget {
@@ -18,7 +19,6 @@ class ChartContainer extends StatefulWidget {
   final String value;
   final String chartValue;
   final VoidCallback onTap;
-
   @override
   State<ChartContainer> createState() => _ChartContainerState();
 }
@@ -73,14 +73,14 @@ class _ChartContainerState extends State<ChartContainer> {
                       PieChartData(sections: [
                         PieChartSectionData(
                           title: "",
-                          radius: 8,
-                          value: 20,
-                          color: Colors.transparent,
+                          radius: 10,
+                          value: 5,
+                          color: Colors.grey,
                         ),
                         PieChartSectionData(
                           title: "",
-                          radius: 8,
-                          value: 60,
+                          radius: 12,
+                          value: 18,
                           color: widget.chartColor,
                         ),
                       ]),
