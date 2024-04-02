@@ -1,20 +1,25 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:home_hub_services/ModelClasses/review.dart';
+import 'package:home_hub_services/ModelClasses/user.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
 
 class ReviewContainer extends StatelessWidget {
-  const ReviewContainer({super.key});
+Reviews reviews;
+UserData userDataList;
+ReviewContainer(this.reviews, this.userDataList);
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       child: Container(
-        height: 18.h,
-        width: 100.w,
         decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -26,6 +31,7 @@ class ReviewContainer extends StatelessWidget {
             ],
             borderRadius: BorderRadius.circular(20)),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             1.h.addHSpace(),
             Row(
@@ -33,8 +39,30 @@ class ReviewContainer extends StatelessWidget {
               children: [
                Row(
                  children: [
-                   CircleAvatar(
-                     radius: 30,
+                   Container(
+                     height: 60,
+                     width: 60,
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.circular(100),
+                     ),
+                     child: ClipRRect(
+                       borderRadius: BorderRadius.circular(100),
+                       child:userDataList.profileImage == ""
+                           ? Image.asset(
+                         "assets/images/profile_image.jpg",
+                         fit: BoxFit.fill,
+                       )
+                           : CachedNetworkImage(
+                         placeholder: (context, url) {
+                           return LoadingAnimationWidget
+                               .hexagonDots(
+                               color: appColor, size: 3.h);
+                         },
+                         fit: BoxFit.fill,
+                         imageUrl:
+                         userDataList.profileImage,
+                       ),
+                     ),
                    ),
                    2.w.addWSpace(),
                    Column(
@@ -52,7 +80,7 @@ class ReviewContainer extends StatelessWidget {
                 Row(
                   children: [
                     RatingBar.builder(
-                      initialRating: 3,
+                      initialRating: reviews.ratings,
                       minRating: 1,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
@@ -72,7 +100,11 @@ class ReviewContainer extends StatelessWidget {
               ],
             ),
             1.h.addHSpace(),
-            Text("Home cleaning services offer comprehensive cleaning solutions tailored to meet the needs of residential spaces. These services typically include dusting, vacuuming, mopping floors, cleaning bathrooms and kitchens, and tidying up living areas. Professional cleaners utilize eco-friendly products and advanced equipment to ensure a thorough and hygienic cleaning process." ,maxLines: 3,style: TextStyle(overflow: TextOverflow.ellipsis),)
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 12),
+              child: Text("${reviews.description}" ,maxLines: 3,style: TextStyle(overflow: TextOverflow.ellipsis),textAlign: TextAlign.start),
+            ),
+            1.h.addHSpace(),
           ],
         ),
       ),

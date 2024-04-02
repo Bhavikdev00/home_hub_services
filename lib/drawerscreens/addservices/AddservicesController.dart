@@ -175,27 +175,13 @@ class AddServicesController extends GetxController {
         savedBy: [],
         serviceIds: '');
 
-    final collesction =
-        FirebaseFirestore.instance.collection("Services-Provider(Provider)");
+    final collection = FirebaseFirestore.instance.collection("Services-Provider(Provider)");
     Map<String, dynamic> data = service.toMap();
-    DocumentReference documentReference = await collesction.add(data);
+    DocumentReference documentReference = await collection.add(data);
     String documentId = documentReference.id;
     service.serviceIds = documentId;
-    await collesction.doc(documentId).update(service.toMap());
+    await collection.doc(documentId).update(service.toMap());
 
-    Ratting ratting =
-        Ratting(userid: userId, rating: 0, createdAt: DateTime.now());
-    DocumentReference documentReference1 = await collesction
-        .doc(documentId)
-        .collection('ratings')
-        .add(ratting.toJson());
-    String documentId1 = documentReference1.id;
-    ratting.doc_id = documentId1;
-    await collesction
-      ..doc(documentId)
-          .collection('ratings')
-          .doc(documentId1)
-          .update(ratting.toJson());
   }
 
   void clearingData() {

@@ -60,7 +60,6 @@ class ServicesData{
     return ServicesData(
       totalPayment: map["total-payment"] ?? 0,
       clicks: map["clicks"] ?? 0,
-
       fcmToken: map["fcmToken"] ?? "",
       useraadharcard: map["useraadharcard"] ?? "",
       Uid: map["Uid"] ?? "",
