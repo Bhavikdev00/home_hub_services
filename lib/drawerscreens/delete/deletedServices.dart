@@ -8,15 +8,15 @@ import 'package:sizer/sizer.dart';
 
 import '../../constraint/app_color.dart';
 
-class deleteServices extends StatefulWidget {
-   deleteServices({super.key});
+class ServicesOff extends StatefulWidget {
+   ServicesOff({super.key});
 
   @override
-  State<deleteServices> createState() => _deleteServicesState();
+  State<ServicesOff> createState() => _ServicesOffState();
 }
 
-class _deleteServicesState extends State<deleteServices> {
-   final deleteController = Get.put(DeleteServicesController());
+class _ServicesOffState extends State<ServicesOff> {
+   final deleteController = Get.put(servicesOffController());
 
    final _globalKey = GlobalKey<FormState>();
   @override

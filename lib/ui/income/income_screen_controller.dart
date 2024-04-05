@@ -37,22 +37,6 @@ class IncomeController extends GetxController{
     update();
   }
 
-
-  sendMoney(int amount, String upiIndia,int total) async {
-    DateTime dateTime = DateTime.now();
-    String prividerId = _storageService.getUserid();
-    var time = Timestamp.fromDate(dateTime);;
-    DocumentReference documentReference =await FirebaseFirestore.instance.collection("Payment_request").add({
-      "date" : time,
-      "uipIndia" : upiIndia,
-      "ProviderId" : prividerId,
-      "amountWithdraw" : amount,
-      "type" : "withdraw"
-    });
-
-  }
-
-
   Future<bool> withdraw(int amount,String upiId, int totalAmount) async {
     try{
 
@@ -60,9 +44,12 @@ class IncomeController extends GetxController{
 
       DateTime dateTime = DateTime.now();
 
-      var time = Timestamp.fromDate(dateTime);;
+      var time = Timestamp.fromDate(dateTime);
 
       int calculate = totalAmount - amount;
+
+      print("The Amount is $amount");
+      print("The Total Amount is $totalAmount");
       await FirebaseFirestore.instance.collection("service_providers").doc(userUid).update({
         "total-payment" : calculate,
       });

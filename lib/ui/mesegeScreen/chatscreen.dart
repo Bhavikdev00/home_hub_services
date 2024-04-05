@@ -312,7 +312,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Row(
                   children: [
                     Icon(Icons.sync),
-                    Text(" Services : ${maps["service_name"]}"),
+                    Flexible(child: Text(" Services : ${maps["service_name"]}",overflow: TextOverflow.ellipsis,)),
                   ],
                 ),
                 1.h.addHSpace(),

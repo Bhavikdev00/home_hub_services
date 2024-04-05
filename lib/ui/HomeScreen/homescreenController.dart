@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/GDPDATA.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,7 +24,10 @@ class HomeScreenController extends GetxController {
     loadUserData();
     requestNotificationPermission();
   }
-RxInt totalAmount = 0.obs;
+RxDouble totalAmount = 0.0.obs;
+  RxDouble Discount = 0.0.obs;
+  RxDouble panddingAmount = 0.0.obs;
+
   RxList<ServicesData> serviceData = <ServicesData>[].obs;
   Rx<User?> user = Rx<User?>(null);
   RxString displayName = ''.obs;
@@ -39,6 +44,7 @@ RxInt totalAmount = 0.obs;
           Uid: "",
           fname: "",
           lname: "",
+          totalPayment: 0,
           Images: "",
           email: "",
           contectnumber: "",
@@ -60,8 +66,7 @@ RxInt totalAmount = 0.obs;
     if (user != null) {
       String uid = user.uid;
       _storageService.UpdateUserId(uid);
-      await getServices();
-      await getOrderDetails();
+
       DocumentReference<Map<String, dynamic>> userRef = FirebaseFirestore.instance.collection('service_providers').doc(uid);
       DocumentSnapshot<Map<String, dynamic>> snapshot = await userRef.get();
       if (snapshot.exists) {
@@ -75,6 +80,8 @@ RxInt totalAmount = 0.obs;
       } else {
         print("Data is empty");
       }
+      await getServices();
+      await getOrderDetails();
 
       // Listen for live updates
       userRef.snapshots().listen((snapshot) {
@@ -159,6 +166,9 @@ RxInt totalAmount = 0.obs;
         order.add(orderResModel);
         calculateAmount(orderResModel.amount);// Add each order to the list
       }
+
+      adminCount(totalAmount.value);
+      calculatependingAmount(totalAmount.value);
       panddingData(order); // Call a method to handle pending data (assuming this method exists)
       // Notify listeners about changes
     });
@@ -172,6 +182,20 @@ RxInt totalAmount = 0.obs;
     totalAmount.value += amount!;
   }
 
+  void adminCount(double value) {
+    print("total Amount values ${totalAmount.value}");
+    double discountAmount = totalAmount * ( 20 / 100);
+    print("Dis ${discountAmount}");
+    Discount.value = totalAmount.value - discountAmount;
+
+  }
+
+
+  void calculatependingAmount(double value){
+    print("Total $value");
+    panddingAmount.value = value - userData.value.totalPayment!;
+    print("user Widraw ${panddingAmount}");
+  }
 
 
 }

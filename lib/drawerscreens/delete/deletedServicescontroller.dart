@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:home_hub_services/ModelClasses/service.dart';
+import 'package:home_hub_services/getstorage/StorageClass.dart';
 
-class DeleteServicesController extends GetxController {
+class servicesOffController extends GetxController {
+  StorageService storageService = StorageService();
   @override
   void onInit() {
     // TODO: implement onInit
@@ -40,13 +42,11 @@ class DeleteServicesController extends GetxController {
   RxList<String> selectedCategory = <String>[].obs;
 
   void getCurrentUser() {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-
-    if (user != null) {
-      userid.value = user.uid;
+    var getuserId = storageService.getUserid();
+    if (getuserId.isNotEmpty) {
+      userid.value = getuserId;
     } else {
-      // User is not logged in
+
       print("Error ");
     }
   }
@@ -87,16 +87,12 @@ class DeleteServicesController extends GetxController {
 
       if(parentSnapshot.docs.isNotEmpty) {
         final QueryDocumentSnapshot documentSnapshot = parentSnapshot.docs[0];
-        final dynamic singleData = documentSnapshot.get("service_ids");
-        final QuerySnapshot subcollectionSnapshot = await FirebaseFirestore
-            .instance
-            .collection('$collectionPath/$singleData/ratings')
-            .get();
-        for (QueryDocumentSnapshot docSnapshot in subcollectionSnapshot.docs) {
-          await docSnapshot.reference.delete();
-        }
-        await FirebaseFirestore.instance.collection(collectionPath).doc(
-            singleData).delete();
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String,dynamic>;
+        ServiceResponseModel serviceResponseModel = ServiceResponseModel.fromMap(data);
+        print("document id ${documentSnapshot.id}");
+        serviceResponseModel.serviceStatus = "denied";
+        var documentId = documentSnapshot.id;
+        await FirebaseFirestore.instance.collection("Services-Provider(Provider)").doc(documentId).update(serviceResponseModel.toMap());
       }
       isLoading.value = false;
       return true;

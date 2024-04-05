@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServiceResponseModel {
+   String serviceStatus;
   final DateTime createdAt;
   final double averageRating;
   final List<String> images;
@@ -16,6 +17,7 @@ class ServiceResponseModel {
   final String userId;
   List? savedBy;
   ServiceResponseModel({
+    required this.serviceStatus,
     required this.savedBy,
     required this.createdAt,
     required this.averageRating,
@@ -34,6 +36,7 @@ class ServiceResponseModel {
 
   factory ServiceResponseModel.fromMap(Map<String, dynamic> map) {
     return ServiceResponseModel(
+      serviceStatus: map["serviceStatus"]?? "",
       savedBy: List<String>.from(map['sendBy'] ?? []),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       averageRating: map['average_rating'].toDouble(),
@@ -52,6 +55,7 @@ class ServiceResponseModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'serviceStatus' : serviceStatus,
       'savedBy' : savedBy,
       'createdAt': Timestamp.fromDate(createdAt),
       'average_rating': averageRating,

@@ -8,15 +8,21 @@ class ChartContainer extends StatefulWidget {
   const ChartContainer({
     Key? key,
     required this.chartColor,
+    this.penddingAmount,
     required this.title,
     required this.value,
+    required this.discount,
     required this.chartValue,
+    required this.discountTitle,
     required this.onTap,
   }) : super(key: key);
 
   final Color chartColor;
   final String title;
   final String value;
+  final String discountTitle;
+  final String discount;
+  final String? penddingAmount;
   final String chartValue;
   final VoidCallback onTap;
   @override
@@ -60,6 +66,19 @@ class _ChartContainerState extends State<ChartContainer> {
                   widget.value.semiBoldReadex(
                     fontColor: Colors.black,
                     fontSize: 18,
+                  ),
+
+                  Row(
+                    children: [
+                      widget.discountTitle.semiBoldReadex(
+                        fontColor: Colors.black.withOpacity(0.5),
+                        fontSize: 12,
+                      ),
+                      widget.discount.semiBoldReadex(
+                        fontColor: Colors.black.withOpacity(0.5),
+                        fontSize: 14,
+                      ),
+                    ],
                   ),
                 ],
               ),

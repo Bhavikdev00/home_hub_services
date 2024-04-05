@@ -19,6 +19,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../drawerscreens/addservices/Addservices.dart';
+import '../../servicesOn/servicesOn.dart';
 import '../containercode/newordercode.dart';
 import '../income/income_screen.dart';
 
@@ -85,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     trailing: Icon(Icons.delete),
                     title: const Text('Delete Services'),
                     onTap: () {
-                      Get.to(deleteServices());
+                      Get.to(ServicesOff());
                       // Handle category 1 tap
                     },
                   ),
@@ -103,6 +104,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Add more list tiles for other categories
               ],
+            ),
+            ListTile(
+              leading: Icon(Icons.cleaning_services),
+              title: Text("Service Start"),
+              onTap: () {
+                Get.to(ServicesOn());
+              },
             ),
             ListTile(
               leading: Icon(Icons.exit_to_app),
@@ -195,6 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Container(
                           child: ChartContainer(
+                            discountTitle: "Admin",
+                            discount: "%20",
                             onTap: () {
                               Get.to(IncomeScreen(_homeScreenController.order,_homeScreenController.userData));
                             },
@@ -206,6 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(width: 5.w),
                         Container(
                           child: ChartContainer(
+                            discountTitle: "",
+                            discount: "",
                             onTap: () {
 
                             },
@@ -587,12 +599,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                           SizedBox(height: 10), // Adjust spacing between image and name
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 10),
-                                            child: Text(
-                                              _homeScreenController.services[index].serviceName,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  _homeScreenController.services[index].serviceName,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Center(child: _homeScreenController.services[index].serviceStatus == "denied" ? Icon(Icons.cancel,color: Colors.red,) : Container()),
+                                              ],
                                             ),
                                           ),
                                         ],

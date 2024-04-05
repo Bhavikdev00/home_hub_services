@@ -12,6 +12,7 @@ import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../utils/app_routes.dart';
 import 'income_screen_controller.dart';
 
 class IncomeScreen extends StatefulWidget {
@@ -27,17 +28,19 @@ class IncomeScreen extends StatefulWidget {
 class _IncomeScreenState extends State<IncomeScreen> {
   int totalAmount = 0;
   bool isLoading = false;
+  double withdraw = 0.0;
   @override
   void initState() {
     super.initState();
+    calculateData(widget.userData);
   }
 
   final number = TextEditingController();
   final uipId = TextEditingController();
   final globel = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
+    final amount =  widget.userData.value.totalPayment!;
     IncomeController controller = Get.put(IncomeController(widget.order));
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +58,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Total Amount ${widget.userData.value.totalPayment}",
+              "Total Amount ${withdraw}",
               style: TextStyle(
                 fontSize: 18,
                 color: appColor,
@@ -95,12 +98,33 @@ class _IncomeScreenState extends State<IncomeScreen> {
                               fontSize: 18,
                             ),
                           ),
-                          subtitle: Text(
-                            "${day}/${mounth}/${year}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                            ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              Text(
+                                "${day}/${mounth}/${year}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    "Status : ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text("${widget.order[index].status}", style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                  ),)
+                                ],
+                              )
+                            ],
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -193,12 +217,16 @@ class _IncomeScreenState extends State<IncomeScreen> {
                         height: 20,
                       ),
                       Text(
-                        "${widget.userData.value.totalPayment!}",
+                        "${withdraw}",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13),
+                  child: Text("20% Admin " ,style: TextStyle(color: Colors.red),),
                 ),
                 1.h.addHSpace(),
                 Padding(
@@ -219,8 +247,8 @@ class _IncomeScreenState extends State<IncomeScreen> {
                         return "Please Enter the Amount";
                       } else {
                         try {
-                          int parsedValue = int.parse(value);
-                          if (parsedValue > widget.userData.value.totalPayment!) {
+                          double parsedValue = double.parse(value);
+                          if (parsedValue > withdraw) {
                             return 'Please enter a value less than or equal to the total amount';
                           }
                         } catch (e) {
@@ -276,20 +304,14 @@ class _IncomeScreenState extends State<IncomeScreen> {
                     child: const Text("Request"),
                     onPressed: () async {
                       if (globel.currentState!.validate()) {
-                        // int amount = int.parse(number.text.trim());
-                        // String upiIndia = uipId.text.toString().trim();
-                        // await controller.sendMoney(amount, upiIndia,totalAmount);
-                        // number.clear();
-                        // uipId.clear();
-                        // Get.back();
-                        int amount = int.parse(number.text.trim());
+                        int amount = withdraw.toInt();
+                        int total = int.parse(number.text);
                         String upiIndia = uipId.text.toString().trim();
-                        int totalAmount = widget.userData.value.totalPayment!;
-                        bool ischeck = await controller.withdraw(amount,upiIndia,totalAmount);
+                         bool ischeck = await controller.withdraw(total,upiIndia,amount);
                         if(ischeck){
                           number.clear();
                           uipId.clear();
-                          Get.back();
+                          _showAlertDialog(context);
                         }else {
                           print("No Data Return");
                         }
@@ -303,5 +325,31 @@ class _IncomeScreenState extends State<IncomeScreen> {
         ),
       ),
     );
+  }
+
+  void _showAlertDialog(BuildContext context) {
+    showDialog<String>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title:const Text('Request Send Admin'),
+        content: const Text('Your request is send to admin wait for 1 or 2 working days accepted request to show notification!'),
+        actions: <Widget>[
+          appButton(
+              text: "Agree",
+              onTap: (){
+                Get.offAllNamed(Routes.navbarRoots);
+              })
+        ],
+      ),
+    );
+  }
+
+  void calculateData(Rx<ServicesData> userData) {
+    var discount = userData.value.totalPayment! * 20 / 100;
+    withdraw = userData.value.totalPayment! - discount;
+    setState(() {
+
+    });
   }
 }

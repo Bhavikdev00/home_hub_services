@@ -161,6 +161,7 @@ class AddServicesController extends GetxController {
     String userId = userid.value;
     var now = DateTime.now();
     ServiceResponseModel service = ServiceResponseModel(
+      serviceStatus: "available",
         createdAt: DateTime.now(),
         userName: names!,
         categoryName: categoryServices.value!,

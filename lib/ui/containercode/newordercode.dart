@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:home_hub_services/constraint/app_color.dart';
 import 'package:home_hub_services/utils/extension.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sizer/sizer.dart';
 import 'newordercodecontroller.dart';
 import 'orderDetailsinUser.dart';
@@ -33,7 +34,16 @@ class OrderHistory extends StatelessWidget {
                     SizedBox(width: 2.w),
                   ],
                 ),
-                Expanded(
+                controller.isLoading.value ? Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        LoadingAnimationWidget.hexagonDots(color: appColor, size: 5.h),
+                      ],
+                    ),
+                  ),
+                ): Expanded(
                   child: ListView.builder(
                     itemCount: controller.isFilter.value ? controller.filterData.length : controller.userData.length,
                     itemBuilder: (BuildContext context, int index) {
