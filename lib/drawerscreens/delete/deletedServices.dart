@@ -23,8 +23,7 @@ class _ServicesOffState extends State<ServicesOff> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:const Text("Delete Services",style: TextStyle(fontSize: 25,fontWeight:FontWeight.bold),),
-
+        title:const Text("Denied Services",style: TextStyle(fontSize: 25,fontWeight:FontWeight.bold),),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -116,9 +115,10 @@ class _ServicesOffState extends State<ServicesOff> {
                     ),
                   ),
                 ),
+                1.h.addHSpace(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 12),
-                  child: appButton(text: "Delete Services",onTap: () async {
+                  padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 12),
+                  child: appButton(text: "Denied Services",onTap: () async {
                     var checkData =  await deleteController.deleteDocumentAndSubcollections("Services-Provider(Provider)");
                     if(checkData){
                       Get.back();

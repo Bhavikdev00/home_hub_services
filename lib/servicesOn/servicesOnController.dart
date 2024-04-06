@@ -48,7 +48,7 @@ class ServicesOnController extends GetxController{
           final QueryDocumentSnapshot documentSnapshot = querySnapshot.docs[0];
           Map<String, dynamic> data = documentSnapshot.data() as Map<String,dynamic>;
           ServiceResponseModel serviceResponseModel = ServiceResponseModel.fromMap(data);
-          serviceResponseModel.serviceStatus = "enable";
+          serviceResponseModel.serviceStatus = "available";
           var documentId = documentSnapshot.id;
           await FirebaseFirestore.instance.collection("Services-Provider(Provider)").doc(documentId).update(serviceResponseModel.toMap());
 

@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: ListTile(
                     trailing: Icon(Icons.delete),
-                    title: const Text('Delete Services'),
+                    title: const Text('Denied Services'),
                     onTap: () {
                       Get.to(ServicesOff());
                       // Handle category 1 tap

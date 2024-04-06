@@ -12,7 +12,7 @@ import '../../constraint/app_color.dart';
 class ReviewContainer extends StatelessWidget {
 Reviews reviews;
 UserData userDataList;
-ReviewContainer(this.reviews, this.userDataList);
+ReviewContainer({required this.reviews, required this.userDataList});
 
 
   @override

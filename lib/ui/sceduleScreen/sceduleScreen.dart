@@ -29,7 +29,7 @@ class _OrderHistoryState extends State<OrderHistory> {
         child: Scaffold(
           appBar: AppBar(
             leading: Icon(Icons.accessibility_new_outlined),
-            title:  Text("Sedule Screen"),
+            title: Text("Schedule Screen"),
             bottom: PreferredSize(
               preferredSize: Size(100.w, 5.h),
               child: TabBar(
@@ -83,7 +83,7 @@ class _OrderHistoryState extends State<OrderHistory> {
         )
             : ListView.builder(
           padding: EdgeInsets.all(0),
-          physics: BouncingScrollPhysics(),
+          physics: AlwaysScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: controller.pending.length,
           itemBuilder: (context, index) {

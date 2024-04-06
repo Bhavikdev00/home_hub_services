@@ -43,7 +43,13 @@ class ReviewScreen extends StatelessWidget {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
-                      return ReviewContainer(controller.reviewsList[index],controller.userDataList[index]); // Assuming ReviewContainer is your widget
+                        if(controller.userDataList.isEmpty){
+                          return Center(
+                            child: Text("No reviews available"),
+                          );
+                        }else{
+                          return ReviewContainer(reviews: controller.reviewsList[index],userDataList: controller.userDataList[index]);
+                        } // Assuming ReviewContainer is your widget
                     },
                     childCount: controller.userDataList.length, // Change this to your actual number of reviews
                   ),
