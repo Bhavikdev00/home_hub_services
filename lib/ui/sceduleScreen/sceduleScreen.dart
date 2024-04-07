@@ -28,8 +28,10 @@ class _OrderHistoryState extends State<OrderHistory> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            leading: Icon(Icons.accessibility_new_outlined),
-            title: Text("Schedule Screen"),
+            title: Text(
+              "Schedule Screen",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
             bottom: PreferredSize(
               preferredSize: Size(100.w, 5.h),
               child: TabBar(

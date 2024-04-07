@@ -29,7 +29,7 @@ class MessageScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 "Messages",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             SizedBox(height: 30),
@@ -85,7 +85,7 @@ class MessageScreen extends StatelessWidget {
                 builder:(_) {
                   List<UserData> user = [];
                   List<ChatRoomResModel> chatdata = [];
-                  if (_.isSearch.value == true) {
+                  if (_.isSearch.value) {
                     user.clear();
                     chatdata.clear();
                     user = _.searchUserData.value;

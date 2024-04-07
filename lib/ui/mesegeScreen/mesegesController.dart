@@ -36,8 +36,8 @@ class MessegeController extends GetxController {
     getData();
   }
 
-  RxBool isSearch = false.obs;
 
+  RxBool isSearch = false.obs;
   RxBool isLoading = true.obs;
   RxList<ChatRoomResModel> chatrooms = <ChatRoomResModel>[].obs;
   RxList<UserData> userDatas = <UserData>[].obs;
@@ -180,6 +180,4 @@ class MessegeController extends GetxController {
     isSearch.value = value;
     update();
   }
-
-
 }
