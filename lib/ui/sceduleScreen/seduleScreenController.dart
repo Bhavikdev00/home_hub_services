@@ -188,6 +188,7 @@ class SeduleScreen extends GetxController {
   async {
     String name = _storageService.getName();
     order.status = "Accepted";
+    print("User Name ${userdata.firstName}");
     await FirebaseFirestore.instance.collection("Orders").doc(order.orderId).update(order.toJson());
     NotificationService.sendMessage(
       msg: "Order Accepted",

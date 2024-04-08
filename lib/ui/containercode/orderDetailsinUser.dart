@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -108,10 +109,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       3.w.addWSpace(),
                       "Service :  "
                           .boldOpenSans(fontSize: 12.sp, fontColor: Colors.black),
-                      "${widget.orderData.servicesName}".semiOpenSans(
-                          fontSize: 12.sp,
-                          textOverflow: TextOverflow.ellipsis,
-                          fontColor: Colors.black),
+                      Flexible(
+                        child: "${widget.orderData.servicesName}".semiOpenSans(
+                            fontSize: 12.sp,
+                            textOverflow: TextOverflow.ellipsis,
+                            fontColor: Colors.black),
+                      ),
                     ],
                   ),
                 ),

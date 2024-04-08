@@ -448,7 +448,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   if(controller.completed[index].status == "Completed"){
                                     Get.snackbar("Services", "Services Completed");
                                   }else{
-                                    print(controller.userdatas[index].email);
+
                                     controller.sendotp(controller.userdatas[index].email);
                                     Get.to(OtpVarification(controller.completed[index],controller.userdatas[index]));
                                   }
